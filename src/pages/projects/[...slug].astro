@@ -1,0 +1,109 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects", ({ data }) => !data.draft);
+  return projects.map((p) => ({ params: { slug: p.id }, props: { project: p } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout title={`${project.data.title} — Project`} description={project.data.summary}>
+  <SiteHeader />
+
+  <main class="container">
+    <a class="back" href={`${base}projects`}>← All projects</a>
+
+    <header class="head">
+      <h1>{project.data.title}</h1>
+      <p class="meta">
+        <span>{project.data.role}</span>
+        <span aria-hidden>·</span>
+        <span>{project.data.period}</span>
+      </p>
+      <p class="summary">{project.data.summary}</p>
+
+      {project.data.stack.length > 0 && (
+        <ul class="stack">
+          {project.data.stack.map((t) => <li>{t}</li>)}
+        </ul>
+      )}
+
+      {project.data.links && (
+        <ul class="links">
+          {project.data.links.live && <li><a href={project.data.links.live}>Live →</a></li>}
+          {project.data.links.repo && <li><a href={project.data.links.repo}>Repo →</a></li>}
+          {project.data.links.caseStudy && <li><a href={project.data.links.caseStudy}>Case study →</a></li>}
+        </ul>
+      )}
+    </header>
+
+    <article class="prose">
+      <Content />
+    </article>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  main { padding-block: var(--space-12); max-width: 48rem; }
+  .back { font-family: var(--font-mono); font-size: 0.875rem; color: var(--color-text-muted); }
+  .head { margin: var(--space-6) 0 var(--space-12); }
+  .meta { color: var(--color-text-muted); display: flex; gap: var(--space-3); margin-bottom: var(--space-4); }
+  .summary { font-size: 1.125rem; max-width: 36rem; }
+  .stack {
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .stack li {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-accent);
+    background: var(--color-accent-soft);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+  }
+  .links {
+    list-style: none;
+    margin: var(--space-6) 0 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .prose :global(h2) { margin-top: var(--space-12); }
+  .prose :global(h3) { margin-top: var(--space-8); }
+  .prose :global(p), .prose :global(ul), .prose :global(ol) { font-size: 1.0625rem; }
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  .prose :global(pre) {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    overflow-x: auto;
+  }
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--space-4);
+    color: var(--color-text-muted);
+    margin: var(--space-6) 0;
+  }
+</style>

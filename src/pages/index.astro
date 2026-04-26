@@ -1,0 +1,218 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+
+const base = import.meta.env.BASE_URL;
+
+const allProjects = await getCollection("projects", ({ data }) => !data.draft);
+const featured = allProjects
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+// TODO: replace with real personal info
+const me = {
+  name: "Your Name",
+  title: "Software Engineer",
+  blurb:
+    "I build pragmatic web systems — currently focused on TODO. I care about clear models, fast feedback loops, and code that reads like prose.",
+  location: "Bangkok, Thailand",
+  email: "you@example.com",
+  social: {
+    github: "https://github.com/patchamet",
+    linkedin: "https://www.linkedin.com/in/TODO",
+  },
+};
+
+const skills: { group: string; items: string[] }[] = [
+  { group: "Languages", items: ["TODO", "TypeScript", "Go"] },
+  { group: "Frontend", items: ["TODO", "React", "Astro"] },
+  { group: "Backend", items: ["TODO", "Node.js", "PostgreSQL"] },
+  { group: "Tooling", items: ["TODO", "Docker", "GitHub Actions"] },
+];
+---
+
+<Layout title={`${me.name} — ${me.title}`} description={me.blurb}>
+  <SiteHeader />
+
+  <main>
+    <section class="hero container" id="top">
+      <p class="eyebrow">Hi, I'm</p>
+      <h1>{me.name}</h1>
+      <p class="title">{me.title} · {me.location}</p>
+      <p class="blurb">{me.blurb}</p>
+      <div class="cta">
+        <a class="btn primary" href={`${base}projects`}>See my work</a>
+        <a class="btn ghost" href={`mailto:${me.email}`}>Get in touch</a>
+      </div>
+    </section>
+
+    <section class="section container" id="about">
+      <h2>About</h2>
+      <p>
+        TODO: 2–4 sentences. What you do, how you think, what you're looking for.
+        Lead with the punchline a recruiter will quote back to a hiring manager.
+      </p>
+    </section>
+
+    <section class="section container" id="skills">
+      <h2>Skills</h2>
+      <div class="skills-grid">
+        {skills.map((s) => (
+          <div class="skill-card">
+            <h3>{s.group}</h3>
+            <ul>
+              {s.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section container" id="featured">
+      <div class="section-head">
+        <h2>Featured projects</h2>
+        <a href={`${base}projects`}>All projects →</a>
+      </div>
+      {featured.length === 0 ? (
+        <p class="muted">No featured projects yet. (Set <code>featured: true</code> on a project's frontmatter.)</p>
+      ) : (
+        <ul class="project-list">
+          {featured.map((p) => (
+            <li class="project-card">
+              <a href={`${base}projects/${p.id}`}>
+                <h3>{p.data.title}</h3>
+                <p class="muted">{p.data.role} · {p.data.period}</p>
+                <p>{p.data.summary}</p>
+                <ul class="stack">
+                  {p.data.stack.slice(0, 5).map((t) => <li>{t}</li>)}
+                </ul>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+
+    <section class="section container" id="contact">
+      <h2>Contact</h2>
+      <p>
+        Best reached by email at <a href={`mailto:${me.email}`}>{me.email}</a>.
+        Also on <a href={me.social.github}>GitHub</a>{" "}
+        and <a href={me.social.linkedin}>LinkedIn</a>.
+      </p>
+    </section>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  main { padding-top: var(--space-8); }
+
+  .hero {
+    padding-block: var(--space-16) var(--space-12);
+  }
+  .eyebrow {
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    margin-bottom: var(--space-2);
+  }
+  .title { color: var(--color-text-muted); margin-bottom: var(--space-6); }
+  .blurb { max-width: 38rem; font-size: 1.125rem; }
+
+  .cta { display: flex; gap: var(--space-4); margin-top: var(--space-6); }
+  .btn {
+    display: inline-block;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    font-weight: 500;
+    transition: transform 120ms ease, background 120ms ease;
+  }
+  .btn:hover { text-decoration: none; transform: translateY(-1px); }
+  .btn.primary {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    border-color: var(--color-accent);
+  }
+  .btn.ghost {
+    background: transparent;
+    color: var(--color-text);
+  }
+  .btn.ghost:hover { background: var(--color-accent-soft); }
+
+  .section { padding-block: var(--space-12); border-top: 1px solid var(--color-border); }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-6);
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: var(--space-4);
+  }
+  .skill-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+  }
+  .skill-card h3 { margin-bottom: var(--space-3); font-size: 1rem; color: var(--color-text-muted); }
+  .skill-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .skill-card li {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: var(--space-1) var(--space-3);
+    font-size: 0.875rem;
+    font-family: var(--font-mono);
+  }
+
+  .project-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: var(--space-4);
+  }
+  .project-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: transform 160ms ease, border-color 160ms ease;
+  }
+  .project-card:hover { transform: translateY(-2px); border-color: var(--color-accent); }
+  .project-card a {
+    display: block;
+    padding: var(--space-6);
+    color: inherit;
+  }
+  .project-card a:hover { text-decoration: none; }
+  .project-card h3 { margin-bottom: var(--space-2); }
+  .stack {
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .stack li {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+  }
+
+  .muted { color: var(--color-text-muted); }
+</style>
