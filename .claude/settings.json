@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm dev)",
+      "Bash(pnpm dev *)",
+      "Bash(pnpm build)",
+      "Bash(pnpm build *)",
+      "Bash(pnpm preview)",
+      "Bash(pnpm preview *)",
+      "Bash(pnpm check)",
+      "Bash(pnpm check *)",
+      "Bash(pnpm astro check)",
+      "Bash(pnpm astro check *)",
+      "Bash(pnpm astro info)",
+      "Bash(pnpm astro sync)",
+      "Bash(pnpm --version)",
+      "Bash(pnpm -v)",
+      "Bash(git fetch)",
+      "Bash(git fetch *)"
+    ]
+  }
+}

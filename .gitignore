@@ -145,5 +145,5 @@ vite.config.ts.timestamp-*
 # Astro generated types/cache
 .astro/
 
-# Claude Code local settings
-.claude/
+# Claude Code: commit settings.json, ignore local-only overrides
+.claude/settings.local.json
