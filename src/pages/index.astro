@@ -8,7 +8,7 @@ const me = {
   name: "Patchamet Sriaksorn",
   title: "Fullstack Developer",
   blurb:
-    "Currently at MLB Solution, working on backend APIs and CMS systems with Node.js, AWS, and React.",
+    "Currently at MLB Solution, building backend services for a content management platform on AWS serverless.",
   email: "Patchamet.s@gmail.com",
   social: {
     github: "https://github.com/patchamet",
@@ -67,10 +67,35 @@ const jobs: TimelineJob[] = [
     company: "MLB Solution Co., Ltd.",
     period: "Dec 2019 – Present",
     sections: [
-      { label: "Projects", items: ["CMS", "Internal Management System"] },
-      { label: "Responsible for", items: ["API", "Back-end website"] },
+      {
+        label: "Projects",
+        items: [
+          "Global CMS (in-house CMS monorepo)",
+          "AI chatbot (WebSocket)",
+          "Admin panel — UI + backend (earlier)",
+        ],
+      },
+      {
+        label: "Internal tooling",
+        items: ["AI agent workflow for the CMS codebase"],
+      },
+      { label: "Responsible for", items: ["API", "Backend", "Frontend (earlier)"] },
     ],
-    stack: ["TypeScript", "Node.js", "React", "AWS Lambda", "Aurora", "DynamoDB", "REST", "WebSocket"],
+    stack: [
+      "TypeScript",
+      "Node.js",
+      "React",
+      "AWS Lambda",
+      "DocumentDB",
+      "MemoryDB",
+      "Aurora MySQL",
+      "S3",
+      "SQS",
+      "REST",
+      "WebSocket",
+      "Serverless Framework",
+      "Docker",
+    ],
   },
   {
     kind: "job",
@@ -131,11 +156,29 @@ const jobs: TimelineJob[] = [
   {
     kind: "job",
     endYear: 2011,
-    role: "Earlier roles",
-    company: "BCI · Dharmniti",
-    period: "2010 – 2011",
-    summary:
-      ".NET Developer at Business Competitive Intelligence (Aug 2010 – Dec 2011), and a brief stint as Assistant Auditor at Dharmniti Account & Tax (Apr – Jul 2010).",
+    role: ".NET Developer",
+    company: "Business Competitive Intelligence",
+    period: "Aug 2010 – Dec 2011",
+    sections: [
+      { label: "Project", items: ["Manufacturing Resource Planning (MRP) system"] },
+    ],
+    stack: ["VB.NET", "MSSQL", "Crystal Report"],
+  },
+  {
+    kind: "job",
+    endYear: 2010,
+    role: "Assistant Auditor",
+    company: "Dharmniti Account & Tax",
+    period: "Apr – Jul 2010",
+    sections: [
+      {
+        label: "Engagements",
+        items: [
+          "Audited listed (publicly-traded) companies",
+          "Closed fund books for a bank",
+        ],
+      },
+    ],
     stack: [],
   },
 ];
