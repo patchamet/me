@@ -8,6 +8,8 @@ const projects = defineCollection({
     summary: z.string(),
     role: z.string(),
     period: z.string(),
+    /** Higher = newer in the timeline. Use 9999 for ongoing. */
+    endYear: z.number().default(9999),
     stack: z.array(z.string()).default([]),
     links: z
       .object({
@@ -17,9 +19,7 @@ const projects = defineCollection({
       })
       .optional(),
     cover: z.string().optional(),
-    featured: z.boolean().default(false),
     draft: z.boolean().default(false),
-    order: z.number().default(0),
   }),
 });
 

@@ -3,15 +3,14 @@ title: "TODO: Project Name"
 summary: "TODO: One-sentence pitch — the problem this project solved and the impact."
 role: "TODO: e.g. Lead Engineer / Solo / Contributor"
 period: "TODO: 2024 – Present"
+endYear: 2024  # used for timeline sort; use 9999 for ongoing projects
 stack:
   - TODO
   - TypeScript
   - React
 links:
   repo: https://github.com/patchamet/REPLACE-ME
-featured: true
 draft: true
-order: 1
 ---
 
 ## Problem

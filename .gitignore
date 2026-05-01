@@ -147,3 +147,6 @@ vite.config.ts.timestamp-*
 
 # Claude Code: commit settings.json, ignore local-only overrides
 .claude/settings.local.json
+
+# init source files
+.init/

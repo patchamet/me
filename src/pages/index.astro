@@ -1,37 +1,181 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 
-const base = import.meta.env.BASE_URL;
-
-const allProjects = await getCollection("projects", ({ data }) => !data.draft);
-const featured = allProjects
-  .filter((p) => p.data.featured)
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 3);
-
-// TODO: replace with real personal info
 const me = {
-  name: "Your Name",
-  title: "Software Engineer",
+  name: "Patchamet Sriaksorn",
+  title: "Fullstack Developer",
   blurb:
-    "I build pragmatic web systems — currently focused on TODO. I care about clear models, fast feedback loops, and code that reads like prose.",
-  location: "Bangkok, Thailand",
-  email: "you@example.com",
+    "Currently at MLB Solution, working on backend APIs and CMS systems with Node.js, AWS, and React.",
+  email: "Patchamet.s@gmail.com",
   social: {
     github: "https://github.com/patchamet",
-    linkedin: "https://www.linkedin.com/in/TODO",
   },
 };
 
-const skills: { group: string; items: string[] }[] = [
-  { group: "Languages", items: ["TODO", "TypeScript", "Go"] },
-  { group: "Frontend", items: ["TODO", "React", "Astro"] },
-  { group: "Backend", items: ["TODO", "Node.js", "PostgreSQL"] },
-  { group: "Tooling", items: ["TODO", "Docker", "GitHub Actions"] },
+// --- Timeline data: jobs + projects + education merged, sorted desc by endYear ---
+
+type Section = {
+  label: string;
+  items: string[];
+  /** "list" = bulleted list, "chips" = chip row, "inline" = comma-joined inline */
+  variant?: "list" | "chips" | "inline";
+};
+
+type TimelineJob = {
+  kind: "job";
+  endYear: number;
+  role: string;
+  company: string;
+  period: string;
+  sections?: Section[];
+  summary?: string;
+  stack: string[];
+};
+
+type TimelineProject = {
+  kind: "project";
+  endYear: number;
+  id: string;
+  title: string;
+  role: string;
+  period: string;
+  summary: string;
+  stack: string[];
+  links?: { repo?: string; live?: string; caseStudy?: string };
+  Content: any;
+};
+
+type TimelineEducation = {
+  kind: "education";
+  endYear: number;
+  degree: string;
+  school: string;
+  period: string;
+  summary?: string;
+};
+
+type TimelineEntry = TimelineJob | TimelineProject | TimelineEducation;
+
+const jobs: TimelineJob[] = [
+  {
+    kind: "job",
+    endYear: 9999,
+    role: "Fullstack Developer",
+    company: "MLB Solution Co., Ltd.",
+    period: "Dec 2019 – Present",
+    sections: [
+      { label: "Projects", items: ["CMS", "Internal Management System"] },
+      { label: "Responsible for", items: ["API", "Back-end website"] },
+    ],
+    stack: ["TypeScript", "Node.js", "React", "AWS Lambda", "Aurora", "DynamoDB", "REST", "WebSocket"],
+  },
+  {
+    kind: "job",
+    endYear: 2019,
+    role: "Fullstack Developer",
+    company: "You Drink I Drive",
+    period: "Sep 2018 – Nov 2019",
+    sections: [
+      { label: "Maintained", items: ["Matching system between drivers and customers"] },
+      { label: "Responsible for", items: ["API", "Back-end website"] },
+    ],
+    stack: ["Node.js", "MeteorJS", "NestJS", "Go", "MongoDB", "RethinkDB", "Docker", "AWS", "Apache Kafka", "REST", "WebSocket"],
+  },
+  {
+    kind: "job",
+    endYear: 2018,
+    role: "Node.js & .NET Developer",
+    company: "AddTech Hub",
+    period: "Nov 2016 – Nov 2018",
+    sections: [
+      {
+        label: "Projects",
+        items: [
+          "Virtual Branch Prototype (Kiatnakin Bank)",
+          "API Core Bank Adapter for Virtual Branch (Kiatnakin Bank)",
+          "Accounting & Auditing System (Dharmniti)",
+        ],
+      },
+      { label: "Maintained", items: ["mPAY"] },
+      { label: "Responsible for", items: ["API", "Hardware connectors"] },
+      {
+        label: "Hardware",
+        variant: "chips",
+        items: [
+          "EDC",
+          "Fingerprint reader",
+          "Smart card reader",
+          "Magnetic card reader",
+          "Barcode reader",
+          "Machine camera",
+        ],
+      },
+    ],
+    stack: ["Node.js", "C# .NET", "C++", "Ruby on Rails", "MongoDB", "Oracle", "REST", "WebSocket", "TCP/IP", "PC/SC", "Serialport"],
+  },
+  {
+    kind: "job",
+    endYear: 2016,
+    role: ".NET Developer",
+    company: "Mastertech International",
+    period: "Jan 2012 – Sep 2016",
+    sections: [
+      { label: "Projects", items: ["Car Maintenance", "GPS-Tracking Server", "Helpdesk System"] },
+      { label: "Responsible for", items: ["Website", "API", "Hardware connectors"] },
+    ],
+    stack: ["VB.NET", "ASP.NET", "MySQL", "MongoDB", "REST", "SOAP", "TCP/IP", "Crystal Report", "Google Maps API"],
+  },
+  {
+    kind: "job",
+    endYear: 2011,
+    role: "Earlier roles",
+    company: "BCI · Dharmniti",
+    period: "2010 – 2011",
+    summary:
+      ".NET Developer at Business Competitive Intelligence (Aug 2010 – Dec 2011), and a brief stint as Assistant Auditor at Dharmniti Account & Tax (Apr – Jul 2010).",
+    stack: [],
+  },
 ];
+
+const education: TimelineEducation[] = [
+  {
+    kind: "education",
+    endYear: 2009,
+    degree: "Bachelor of Business Administration",
+    school: "Prince of Songkla University",
+    period: "Graduated 2009",
+    summary: "Major in Accounting Information System.",
+  },
+];
+
+const allProjects = await getCollection("projects", ({ data }) => !data.draft);
+const projectEntries: TimelineProject[] = await Promise.all(
+  allProjects.map(async (p) => ({
+    kind: "project" as const,
+    endYear: p.data.endYear,
+    id: p.id,
+    title: p.data.title,
+    role: p.data.role,
+    period: p.data.period,
+    summary: p.data.summary,
+    stack: p.data.stack,
+    links: p.data.links,
+    Content: (await render(p)).Content,
+  }))
+);
+
+const timeline: TimelineEntry[] = [...jobs, ...projectEntries, ...education].sort(
+  (a, b) => b.endYear - a.endYear
+);
+
+const yearLabel = (y: number) => (y >= 9999 ? "Now" : String(y));
+
+// "Currently using" derived from the most recent (ongoing) job
+const currentJob = jobs.find((j) => j.endYear >= 9999);
+const currentStack = currentJob?.stack ?? [];
 ---
 
 <Layout title={`${me.name} — ${me.title}`} description={me.blurb}>
@@ -41,10 +185,10 @@ const skills: { group: string; items: string[] }[] = [
     <section class="hero container" id="top">
       <p class="eyebrow">Hi, I'm</p>
       <h1>{me.name}</h1>
-      <p class="title">{me.title} · {me.location}</p>
+      <p class="title">{me.title}</p>
       <p class="blurb">{me.blurb}</p>
       <div class="cta">
-        <a class="btn primary" href={`${base}projects`}>See my work</a>
+        <a class="btn primary" href="#timeline">See my timeline</a>
         <a class="btn ghost" href={`mailto:${me.email}`}>Get in touch</a>
       </div>
     </section>
@@ -52,56 +196,121 @@ const skills: { group: string; items: string[] }[] = [
     <section class="section container" id="about">
       <h2>About</h2>
       <p>
-        TODO: 2–4 sentences. What you do, how you think, what you're looking for.
-        Lead with the punchline a recruiter will quote back to a hiring manager.
+        I've been writing software since 2010 — .NET first, then Node.js across web
+        and hardware projects, now mostly TypeScript on AWS serverless. The systems I
+        enjoy most are the ones where the data model has to be careful and the
+        integrations are messy.
       </p>
+      <p>This site is a slow project to keep my own work in one place.</p>
     </section>
 
-    <section class="section container" id="skills">
-      <h2>Skills</h2>
-      <div class="skills-grid">
-        {skills.map((s) => (
-          <div class="skill-card">
-            <h3>{s.group}</h3>
-            <ul>
-              {s.items.map((item) => <li>{item}</li>)}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <section class="section container" id="featured">
-      <div class="section-head">
-        <h2>Featured projects</h2>
-        <a href={`${base}projects`}>All projects →</a>
-      </div>
-      {featured.length === 0 ? (
-        <p class="muted">No featured projects yet. (Set <code>featured: true</code> on a project's frontmatter.)</p>
-      ) : (
-        <ul class="project-list">
-          {featured.map((p) => (
-            <li class="project-card">
-              <a href={`${base}projects/${p.id}`}>
-                <h3>{p.data.title}</h3>
-                <p class="muted">{p.data.role} · {p.data.period}</p>
-                <p>{p.data.summary}</p>
-                <ul class="stack">
-                  {p.data.stack.slice(0, 5).map((t) => <li>{t}</li>)}
-                </ul>
-              </a>
-            </li>
-          ))}
-        </ul>
+    <section class="section container" id="timeline">
+      <h2>Timeline</h2>
+      {currentStack.length > 0 && (
+        <div class="now">
+          <span class="now-label">Currently using</span>
+          <ul class="now-stack">
+            {currentStack.map((t) => <li>{t}</li>)}
+          </ul>
+        </div>
       )}
+      <ol class="tl">
+        {timeline.map((e) => {
+          const anchor = e.kind === "project" ? `project-${e.id}` : undefined;
+          return (
+            <li class={`tl-entry tl-${e.kind}`} id={anchor}>
+              <span class="tl-year">{yearLabel(e.endYear)}</span>
+              <span class="tl-dot" aria-hidden="true"></span>
+              <div class="tl-card">
+                {e.kind === "job" && (
+                  <>
+                    <div class="tl-head">
+                      <h3>{e.role}</h3>
+                      <span class="tl-period">{e.period}</span>
+                    </div>
+                    <p class="tl-sub">{e.company}</p>
+                    {e.summary && <p class="tl-summary">{e.summary}</p>}
+                    {e.sections && e.sections.length > 0 && (
+                      <dl class="tl-sections">
+                        {e.sections.map((s) => {
+                          const variant = s.variant ?? (s.items.length > 1 ? "list" : "inline");
+                          return (
+                            <>
+                              <dt>{s.label}</dt>
+                              <dd>
+                                {variant === "inline" && <span>{s.items.join(", ")}</span>}
+                                {variant === "list" && (
+                                  <ul>
+                                    {s.items.map((it) => <li>{it}</li>)}
+                                  </ul>
+                                )}
+                                {variant === "chips" && (
+                                  <ul class="chips">
+                                    {s.items.map((it) => <li>{it}</li>)}
+                                  </ul>
+                                )}
+                              </dd>
+                            </>
+                          );
+                        })}
+                      </dl>
+                    )}
+                    {e.stack.length > 0 && (
+                      <ul class="stack">
+                        {e.stack.map((t) => <li>{t}</li>)}
+                      </ul>
+                    )}
+                  </>
+                )}
+
+                {e.kind === "project" && (
+                  <>
+                    <div class="tl-head">
+                      <h3>{e.title}</h3>
+                      <span class="tl-period">{e.period}</span>
+                    </div>
+                    <p class="tl-sub">{e.role}</p>
+                    <p class="tl-summary">{e.summary}</p>
+                    {e.stack.length > 0 && (
+                      <ul class="stack stack-accent">
+                        {e.stack.map((t) => <li>{t}</li>)}
+                      </ul>
+                    )}
+                    {e.links && (
+                      <ul class="links">
+                        {e.links.live && <li><a href={e.links.live}>Live →</a></li>}
+                        {e.links.repo && <li><a href={e.links.repo}>Repo →</a></li>}
+                        {e.links.caseStudy && <li><a href={e.links.caseStudy}>Case study →</a></li>}
+                      </ul>
+                    )}
+                    <div class="prose">
+                      <e.Content />
+                    </div>
+                  </>
+                )}
+
+                {e.kind === "education" && (
+                  <>
+                    <div class="tl-head">
+                      <h3>{e.degree}</h3>
+                      <span class="tl-period">{e.period}</span>
+                    </div>
+                    <p class="tl-sub">{e.school}</p>
+                    {e.summary && <p class="tl-summary">{e.summary}</p>}
+                  </>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
     </section>
 
     <section class="section container" id="contact">
       <h2>Contact</h2>
       <p>
         Best reached by email at <a href={`mailto:${me.email}`}>{me.email}</a>.
-        Also on <a href={me.social.github}>GitHub</a>{" "}
-        and <a href={me.social.linkedin}>LinkedIn</a>.
+        Also on <a href={me.social.github}>GitHub</a>.
       </p>
     </section>
   </main>
@@ -112,9 +321,10 @@ const skills: { group: string; items: string[] }[] = [
 <style>
   main { padding-top: var(--space-8); }
 
-  .hero {
-    padding-block: var(--space-16) var(--space-12);
-  }
+  /* smooth anchor scrolling under sticky header */
+  :global(html) { scroll-behavior: smooth; scroll-padding-top: 4rem; }
+
+  .hero { padding-block: var(--space-16) var(--space-12); }
   .eyebrow {
     color: var(--color-text-muted);
     font-family: var(--font-mono);
@@ -134,72 +344,198 @@ const skills: { group: string; items: string[] }[] = [
     transition: transform 120ms ease, background 120ms ease;
   }
   .btn:hover { text-decoration: none; transform: translateY(-1px); }
-  .btn.primary {
-    background: var(--color-accent);
-    color: var(--color-bg);
-    border-color: var(--color-accent);
-  }
-  .btn.ghost {
-    background: transparent;
-    color: var(--color-text);
-  }
+  .btn.primary { background: var(--color-accent); color: var(--color-bg); border-color: var(--color-accent); }
+  .btn.ghost { background: transparent; color: var(--color-text); }
   .btn.ghost:hover { background: var(--color-accent-soft); }
 
   .section { padding-block: var(--space-12); border-top: 1px solid var(--color-border); }
-  .section-head {
+
+  /* Timeline — "Currently using" callout */
+  .now {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: var(--space-6);
-  }
-
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-    gap: var(--space-4);
-  }
-  .skill-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--space-6);
-  }
-  .skill-card h3 { margin-bottom: var(--space-3); font-size: 1rem; color: var(--color-text-muted); }
-  .skill-card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-  .skill-card li {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-8);
+    padding: var(--space-4) var(--space-6);
     background: var(--color-accent-soft);
-    color: var(--color-accent);
-    border-radius: var(--radius-sm);
-    padding: var(--space-1) var(--space-3);
-    font-size: 0.875rem;
-    font-family: var(--font-mono);
+    border: 1px dashed color-mix(in srgb, var(--color-accent) 35%, transparent);
+    border-radius: var(--radius-md);
   }
-
-  .project-list {
+  .now-label {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .now-stack {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-    gap: var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
   }
-  .project-card {
+  .now-stack li {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-accent);
+    background: var(--color-bg);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+  }
+
+  .tl {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  /* Vertical spine, between year column and dot */
+  .tl::before {
+    content: "";
+    position: absolute;
+    left: calc(4rem + 1rem + 6px); /* year col + gap + half-dot */
+    top: 0.75rem;
+    bottom: 0.75rem;
+    width: 2px;
+    background: var(--color-border);
+  }
+
+  .tl-entry {
+    position: relative;
+    padding-left: calc(4rem + 1rem + 14px + var(--space-6)); /* year + gap + dot + gap to card */
+    padding-bottom: var(--space-8);
+    scroll-margin-top: 5rem;
+  }
+  .tl-entry:last-child { padding-bottom: 0; }
+
+  .tl-year {
+    position: absolute;
+    left: 0;
+    top: 18px;
+    width: 4rem;
+    text-align: right;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1;
+  }
+
+  .tl-dot {
+    position: absolute;
+    left: calc(4rem + 1rem); /* end of year col + gap */
+    top: 18px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    z-index: 1;
+  }
+  .tl-project .tl-dot {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px var(--color-accent-soft);
+  }
+
+  .tl-card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
-    transition: transform 160ms ease, border-color 160ms ease;
-  }
-  .project-card:hover { transform: translateY(-2px); border-color: var(--color-accent); }
-  .project-card a {
-    display: block;
     padding: var(--space-6);
-    color: inherit;
+    transition: border-color 160ms ease, transform 160ms ease;
   }
-  .project-card a:hover { text-decoration: none; }
-  .project-card h3 { margin-bottom: var(--space-2); }
+  .tl-card:hover { border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-border)); }
+  .tl-project .tl-card {
+    border-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
+  }
+
+  .tl-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+  .tl-head h3 { margin: 0; font-size: 1.0625rem; }
+  .tl-project .tl-head h3 { font-size: 1.25rem; }
+  .tl-period {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+  .tl-sub { color: var(--color-text-muted); margin: var(--space-1) 0 var(--space-3); }
+  .tl-summary { font-size: 1rem; max-width: 38rem; }
+  .tl-project .tl-summary { font-size: 1.0625rem; }
+
+  /* Sections (Projects / Maintained / Responsible / Hardware) inside a job card */
+  .tl-sections {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--space-2) var(--space-6);
+    margin: var(--space-4) 0 0;
+  }
+  .tl-sections dt {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-top: 2px; /* align baseline with first dd line */
+    white-space: nowrap;
+  }
+  .tl-sections dd {
+    margin: 0;
+    font-size: 0.9375rem;
+    min-width: 0;
+  }
+  .tl-sections dd ul {
+    list-style: disc;
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+  .tl-sections dd ul li { margin-bottom: var(--space-1); }
+  .tl-sections dd ul li:last-child { margin-bottom: 0; }
+  .tl-sections dd ul.chips {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .tl-sections dd ul.chips li {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    margin-bottom: 0;
+  }
+
+  /* Education entry: lower-key visual */
+  .tl-education .tl-dot {
+    background: var(--color-bg);
+    border-color: var(--color-text-muted);
+  }
+  .tl-education .tl-card {
+    background: transparent;
+    border-style: dashed;
+  }
+  .tl-education .tl-head h3 {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Stack chips */
   .stack {
     list-style: none;
-    margin: var(--space-3) 0 0;
+    margin: var(--space-4) 0 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
@@ -213,6 +549,74 @@ const skills: { group: string; items: string[] }[] = [
     padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
   }
+  .stack-accent li {
+    color: var(--color-accent);
+    background: var(--color-accent-soft);
+    border-color: transparent;
+  }
+
+  .links {
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .prose { max-width: 38rem; margin-top: var(--space-6); }
+  .prose :global(h2) { margin-top: var(--space-8); font-size: 1.125rem; }
+  .prose :global(h3) { margin-top: var(--space-6); font-size: 1rem; }
+  .prose :global(p), .prose :global(ul), .prose :global(ol) { font-size: 1rem; }
+  .prose :global(code) {
+    font-family: var(--font-mono);
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  .prose :global(pre) {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    overflow-x: auto;
+  }
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--space-4);
+    color: var(--color-text-muted);
+    margin: var(--space-6) 0;
+  }
 
   .muted { color: var(--color-text-muted); }
+
+  /* Mobile: drop year column, hide spine, collapse cleanly */
+  @media (max-width: 38rem) {
+    .tl::before { display: none; }
+    .tl-entry { padding-left: 0; }
+    .tl-year {
+      position: static;
+      width: auto;
+      text-align: left;
+      display: inline-block;
+      margin-bottom: var(--space-2);
+      padding: 2px var(--space-2);
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+      border-radius: var(--radius-sm);
+    }
+    .tl-dot { display: none; }
+    /* Stack sections vertically on narrow screens */
+    .tl-sections {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .tl-sections dt {
+      margin-top: var(--space-3);
+      padding-top: 0;
+    }
+    .tl-sections dt:first-of-type { margin-top: 0; }
+    .tl-sections dd { margin-top: var(--space-1); }
+  }
 </style>
