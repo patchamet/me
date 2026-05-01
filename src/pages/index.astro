@@ -5,7 +5,8 @@ import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 
 const me = {
-  name: "Patchamet Sriaksorn",
+  fullName: "Patchamet Sriaksorn",
+  nickname: "Ohm",
   title: "Fullstack Developer",
   blurb:
     "Currently at MLB Solution, building backend services for a content management platform on AWS serverless.",
@@ -70,8 +71,9 @@ const jobs: TimelineJob[] = [
       {
         label: "Projects",
         items: [
-          "Global CMS (in-house CMS monorepo)",
-          "AI chatbot (WebSocket)",
+          "Global CMS (in-house CMS — admin and public APIs)",
+          "AI assistant — LLM + VectorDB (admin docs, translation, content)",
+          "Cross-branch print relay for kiosk self-checkout — Electron + WebSocket (earlier)",
           "Admin panel — UI + backend (earlier)",
         ],
       },
@@ -85,6 +87,7 @@ const jobs: TimelineJob[] = [
       "TypeScript",
       "Node.js",
       "React",
+      "Electron",
       "AWS Lambda",
       "DocumentDB",
       "MemoryDB",
@@ -93,6 +96,8 @@ const jobs: TimelineJob[] = [
       "SQS",
       "REST",
       "WebSocket",
+      "LLM",
+      "VectorDB",
       "Serverless Framework",
       "Docker",
     ],
@@ -148,7 +153,14 @@ const jobs: TimelineJob[] = [
     company: "Mastertech International",
     period: "Jan 2012 – Sep 2016",
     sections: [
-      { label: "Projects", items: ["Car Maintenance", "GPS-Tracking Server", "Helpdesk System"] },
+      {
+        label: "Projects",
+        items: [
+          "Car Maintenance",
+          "GPS-Tracking Server — custom TCP listener for GPS trackers",
+          "Helpdesk System",
+        ],
+      },
       { label: "Responsible for", items: ["Website", "API", "Hardware connectors"] },
     ],
     stack: ["VB.NET", "ASP.NET", "MySQL", "MongoDB", "REST", "SOAP", "TCP/IP", "Crystal Report", "Google Maps API"],
@@ -221,13 +233,13 @@ const currentJob = jobs.find((j) => j.endYear >= 9999);
 const currentStack = currentJob?.stack ?? [];
 ---
 
-<Layout title={`${me.name} — ${me.title}`} description={me.blurb}>
+<Layout title={`${me.fullName} (${me.nickname}) — ${me.title}`} description={me.blurb}>
   <SiteHeader />
 
   <main>
     <section class="hero container" id="top">
       <p class="eyebrow">Hi, I'm</p>
-      <h1>{me.name}</h1>
+      <h1>{me.fullName} <span class="alt-name">({me.nickname} <span class="wordmark">Ω</span>)</span></h1>
       <p class="title">{me.title}</p>
       <p class="blurb">{me.blurb}</p>
       <div class="cta">
@@ -239,10 +251,11 @@ const currentStack = currentJob?.stack ?? [];
     <section class="section container" id="about">
       <h2>About</h2>
       <p>
-        I've been writing software since 2010 — .NET first, then Node.js across web
-        and hardware projects, now mostly TypeScript on AWS serverless. The systems I
-        enjoy most are the ones where the data model has to be careful and the
-        integrations are messy.
+        I've been writing software since 2010, with a BBA in accounting before that.
+        Spent the .NET years on banking and hardware integration, then Node.js on
+        real-time and matching systems, now mostly TypeScript on AWS serverless and
+        AI plumbing. I gravitate to systems where the data model has to be careful
+        and the boundaries are unfamiliar.
       </p>
       <p>This site is a slow project to keep my own work in one place.</p>
     </section>
@@ -376,6 +389,18 @@ const currentStack = currentJob?.stack ?? [];
   }
   .title { color: var(--color-text-muted); margin-bottom: var(--space-6); }
   .blurb { max-width: 38rem; font-size: 1.125rem; }
+
+  .alt-name {
+    font-weight: 400;
+    color: var(--color-text-muted);
+    margin-left: 0.25em;
+    white-space: nowrap;
+  }
+  .wordmark {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    margin-left: 0.1em;
+  }
 
   .cta { display: flex; gap: var(--space-4); margin-top: var(--space-6); }
   .btn {

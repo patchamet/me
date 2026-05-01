@@ -9,7 +9,7 @@ const links = [
 
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href={base}>Patchamet Sriaksorn</a>
+    <a class="brand" href={base}><span class="brand-mark">Ω</span> Ohm</a>
     <nav>
       <ul>
         {links.map((l) => (
@@ -38,6 +38,12 @@ const links = [
   .brand {
     font-weight: 600;
     color: var(--color-text);
+    letter-spacing: 0.01em;
+  }
+  .brand-mark {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    margin-right: 0.15em;
   }
   nav ul {
     list-style: none;
