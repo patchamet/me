@@ -190,15 +190,15 @@
   }
 }
 
-/* Zap flash — for lightning bolt elements that briefly spark.
-   Plain opacity flicker; no text-shadow / box-shadow since those read
-   as a dark blur on light themes. */
+/* Zap flash — lightning bolt sparks with a yellow drop-shadow glow
+   during the visible portion. Drop-shadow uses the lightning color
+   (not currentColor), so it doesn't read as a dark blur on light. */
 @keyframes zap-flash {
-  0%, 90% { opacity: 0; }
-  92%     { opacity: 1; }
-  94%     { opacity: 0.3; }
-  96%     { opacity: 1; }
-  100%    { opacity: 0; }
+  0%, 90% { opacity: 0; filter: none; }
+  92%     { opacity: 1; filter: drop-shadow(0 0 5px var(--zap-color, #fbbf24)); }
+  94%     { opacity: 0.4; filter: drop-shadow(0 0 2px var(--zap-color, #fbbf24)); }
+  96%     { opacity: 1; filter: drop-shadow(0 0 6px var(--zap-color, #fbbf24)); }
+  100%    { opacity: 0; filter: none; }
 }
 
 /* ─── J. Marker (horizontal line wipe-in) ────────────────────────────── */

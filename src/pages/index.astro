@@ -245,16 +245,19 @@ const currentStack = currentJob?.stack ?? [];
       <h1>
         <span class="zap-host">
           <svg class="zap zap-1" viewBox="0 0 10 30" aria-hidden="true">
-            <polyline points="5,0 2,8 6,10 3,18 7,20 4,30" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="miter" stroke-linecap="round"></polyline>
+            <polyline points="5,0 1,5 7,7 2,12 8,14 3,20 7,22 4,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
           </svg>
           <svg class="zap zap-2" viewBox="0 0 10 30" aria-hidden="true">
-            <polyline points="5,0 8,8 4,10 7,18 3,20 6,30" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="miter" stroke-linecap="round"></polyline>
+            <polyline points="5,0 8,5 3,7 7,12 2,14 6,20 3,22 5,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
           </svg>
           <svg class="zap zap-3" viewBox="0 0 10 30" aria-hidden="true">
-            <polyline points="4,0 2,12 6,14 3,28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="miter" stroke-linecap="round"></polyline>
+            <polyline points="5,0 2,7 7,9 3,15 8,17 4,24 6,26 2,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
           </svg>
           <svg class="zap zap-4" viewBox="0 0 10 30" aria-hidden="true">
-            <polyline points="6,0 8,12 4,14 7,28" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="miter" stroke-linecap="round"></polyline>
+            <polyline points="4,0 7,8 3,11 6,18 2,21 5,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
+          </svg>
+          <svg class="zap zap-5" viewBox="0 0 10 30" aria-hidden="true">
+            <polyline points="6,0 3,8 8,11 4,18 9,21 5,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
           </svg>
           <span class="omega-display flicker-on">
             <span class="pulse">Ω</span>
@@ -414,7 +417,7 @@ const currentStack = currentJob?.stack ?? [];
 
   /* Eyebrow — terminal-style prompt */
   .eyebrow {
-    color: var(--ink-3);
+    color: var(--ink-2);
     font-family: var(--font-mono);
     font-size: 0.6875rem; /* 11px */
     letter-spacing: 0.16em;
@@ -442,43 +445,58 @@ const currentStack = currentJob?.stack ?? [];
     color: var(--ink);
     display: inline-block;
   }
-  /* Zigzag SVG lightning bolts radiating around Ω */
+  /* Zigzag SVG lightning bolts — positioned on LEFT / TOP / BOTTOM of Ω
+     so they never reach into the name's reading area to the right. */
+  .zap-host {
+    --zap-color: #fbbf24;
+  }
   .zap {
     position: absolute;
-    width: 0.4em;
-    height: 1.1em;
+    width: 0.5em;
+    height: 1.4em;
     pointer-events: none;
     opacity: 0;
     overflow: visible;
   }
+  /* Top, slight right tilt */
   .zap-1 {
-    top: -1em;
-    right: -0.3em;
-    transform: rotate(25deg);
-    animation: zap-flash 5s ease-out infinite 0.4s;
+    top: -1.2em;
+    left: 30%;
+    transform: rotate(-8deg);
+    animation: zap-flash 4s ease-out infinite 0.5s;
   }
+  /* Top-left, sharper tilt */
   .zap-2 {
-    top: -0.8em;
-    left: -0.3em;
-    transform: rotate(-30deg);
-    animation: zap-flash 5s ease-out infinite 2s;
+    top: -0.9em;
+    left: -0.4em;
+    transform: rotate(-35deg);
+    animation: zap-flash 4s ease-out infinite 1.6s;
   }
+  /* Mid-left, near-horizontal */
   .zap-3 {
-    top: 0.2em;
-    right: -0.9em;
+    top: 0.1em;
+    left: -0.9em;
     transform: rotate(80deg);
-    animation: zap-flash 5s ease-out infinite 3.4s;
+    animation: zap-flash 4s ease-out infinite 2.7s;
   }
+  /* Bottom-left */
   .zap-4 {
-    bottom: -0.7em;
+    bottom: -0.8em;
     left: -0.2em;
-    transform: rotate(-160deg);
-    animation: zap-flash 5s ease-out infinite 1.2s;
+    transform: rotate(-150deg);
+    animation: zap-flash 4s ease-out infinite 1s;
+  }
+  /* Bottom, slight left tilt */
+  .zap-5 {
+    bottom: -1em;
+    left: 35%;
+    transform: rotate(170deg);
+    animation: zap-flash 4s ease-out infinite 3.2s;
   }
 
   .title {
     font-family: var(--font-mono);
-    color: var(--ink-3);
+    color: var(--ink-2);
     margin-bottom: var(--space-6);
     min-height: 1em;
     font-size: 0.875rem;
@@ -517,7 +535,7 @@ const currentStack = currentJob?.stack ?? [];
     display: inline-block;
     padding: var(--space-3) var(--space-6);
     border-radius: 999px;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--ink-2);
     font-weight: 500;
     font-family: var(--font-mono);
     font-size: 0.875rem;

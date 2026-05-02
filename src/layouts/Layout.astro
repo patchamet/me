@@ -74,19 +74,27 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       }
     </script>
 
-    {/* Magnetic buttons — translate toward cursor on hover */}
+    {/* Magnetic buttons — translate toward cursor on hover.
+        Skipped when the user prefers reduced motion. */}
     <script>
-      const STRENGTH = 0.35;
-      for (const el of document.querySelectorAll<HTMLElement>("[data-magnet]")) {
-        el.addEventListener("mousemove", (e) => {
-          const r = el.getBoundingClientRect();
-          const x = (e.clientX - r.left - r.width / 2) * STRENGTH;
-          const y = (e.clientY - r.top - r.height / 2) * STRENGTH;
-          el.style.transform = `translate(${x}px, ${y}px)`;
-        });
-        el.addEventListener("mouseleave", () => {
-          el.style.transform = "";
-        });
+      const reducedMotionMagnet = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!reducedMotionMagnet) {
+        const STRENGTH = 0.35;
+        for (const el of document.querySelectorAll<HTMLElement>(
+          "[data-magnet]",
+        )) {
+          el.addEventListener("mousemove", (e) => {
+            const r = el.getBoundingClientRect();
+            const x = (e.clientX - r.left - r.width / 2) * STRENGTH;
+            const y = (e.clientY - r.top - r.height / 2) * STRENGTH;
+            el.style.transform = `translate(${x}px, ${y}px)`;
+          });
+          el.addEventListener("mouseleave", () => {
+            el.style.transform = "";
+          });
+        }
       }
     </script>
 
@@ -96,12 +104,23 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
         in), data-after (id of another typewriter element to chain after),
         data-tail (HTML appended after typing completes). */}
     <script>
+      const reducedMotionTw = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
       function typewrite(
         el: HTMLElement,
         text: string,
         speed: number,
         onDone?: () => void,
       ) {
+        // Respect prefers-reduced-motion: render the full text instantly,
+        // skip the caret + per-char animation entirely.
+        if (reducedMotionTw) {
+          el.textContent = text;
+          onDone?.();
+          return;
+        }
         el.innerHTML =
           '<span class="tw-text"></span><span class="tw-caret">▍</span>';
         const textSpan = el.querySelector<HTMLSpanElement>(".tw-text")!;
