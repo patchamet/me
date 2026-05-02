@@ -1,0 +1,1125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ohm — Fullstack Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fafaf7;--ink:#16140f;--ink-2:rgba(22,20,15,.62);--ink-3:rgba(22,20,15,.38);--line:rgba(22,20,15,.10);--line-2:rgba(22,20,15,.18);--chip:rgba(22,20,15,.04);--accent:#16140f;
+--serif:'Instrument Serif','Times New Roman',serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;}
+[data-theme="dark"]{--bg:#0e0d0a;--ink:#f4f2ec;--ink-2:rgba(244,242,236,.62);--ink-3:rgba(244,242,236,.38);--line:rgba(244,242,236,.10);--line-2:rgba(244,242,236,.18);--chip:rgba(244,242,236,.06);--accent:#f4f2ec;}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--sans);transition:background .35s,color .35s}
+::selection{background:var(--ink);color:var(--bg)}
+body[data-rm="on"] *,body[data-rm="on"] *::before,body[data-rm="on"] *::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" data-presets="react">
+// Shared content data for all variations.
+const OHM = {
+  name: 'Patchamet Sriaksorn',
+  nick: 'Ohm',
+  symbol: 'Ω',
+  role: 'Fullstack Developer',
+  intro: "Currently at MLB Solution, building backend services for a content management platform on AWS serverless.",
+  about: "I've been writing software since 2010, with a BBA in accounting before that. Spent the .NET years on banking and hardware integration, then Node.js on real-time and matching systems, now mostly TypeScript on AWS serverless and AI plumbing. I gravitate to systems where the data model has to be careful and the boundaries are unfamiliar.",
+  email: 'Patchamet.s@gmail.com',
+  github: 'patchamet',
+  currentStack: [
+    'TypeScript','Node.js','C# .NET','React','Electron','AWS Lambda',
+    'DocumentDB','MemoryDB','Aurora MySQL','S3','SQS','REST','WebSocket',
+    'LLM','VectorDB','Serverless Framework','Docker',
+  ],
+  timeline: [
+    {
+      year: 'Now', from: 'Dec 2019', to: 'Present',
+      title: 'Fullstack Developer', org: 'MLB Solution Co., Ltd.',
+      bullets: [
+        ['Projects', ['Global CMS (in-house CMS)', 'Cross-branch print relay for kiosk self-checkout', 'Admin panel — UI + backend']],
+        ['Built',    ['AI agent workflow for the CMS codebase', 'Misc internal tools — Windows services, admin scripts, etc.']],
+        ['Owned',    ['API, Back-end website']],
+      ],
+      stack: ['TypeScript','Node.js','C# .NET','React','AWS Lambda','DocumentDB','LLM','VectorDB','Serverless','Docker'],
+    },
+    {
+      year: '2019', from: 'Sep 2018', to: 'Nov 2019',
+      title: 'Fullstack Developer', org: 'You Drink I Drive',
+      bullets: [
+        ['Maintained', ['Matching system between drivers and customers']],
+        ['Owned',      ['API, Back-end website']],
+      ],
+      stack: ['Node.js','MeteorJS','NestJS','Go','MongoDB','RethinkDB','Kafka','Docker','AWS','REST','WebSocket'],
+    },
+    {
+      year: '2018', from: 'Nov 2016', to: 'Nov 2018',
+      title: 'Node.js & .NET Developer', org: 'AddTech Hub',
+      bullets: [
+        ['Projects',   ['Virtual Branch Prototype', 'API Core Bank Adapter for Virtual Branch', 'Accounting & Auditing System']],
+        ['Maintained', ['Mobile payment app']],
+        ['Hardware',   ['EDC, fingerprint, smart card, magnetic, barcode, machine camera']],
+      ],
+      stack: ['Node.js','C# .NET','C++','Ruby on Rails','MongoDB','Oracle','TCP/IP','PC/SC'],
+    },
+    {
+      year: '2016', from: 'Jan 2012', to: 'Sep 2016',
+      title: '.NET Developer', org: 'Mastertech International',
+      bullets: [
+        ['Projects', ['Car Maintenance', 'GPS-Tracking Server — custom TCP listener for GPS trackers', 'Helpdesk System']],
+        ['Owned',    ['Website, API, Hardware connectors']],
+      ],
+      stack: ['VB.NET','ASP.NET','MySQL','MongoDB','SOAP','TCP/IP','Crystal Report','Google Maps API'],
+    },
+    {
+      year: '2011', from: 'Aug 2010', to: 'Dec 2011',
+      title: '.NET Developer', org: 'Business Competitive Intelligence',
+      bullets: [
+        ['Project', ['Manufacturing Resource Planning (MRP) system']],
+      ],
+      stack: ['VB.NET','MSSQL','Crystal Report'],
+    },
+    {
+      year: '2010', from: 'Apr', to: 'Jul 2010',
+      title: 'Audit Assistant', org: 'Dharmniti Account & Tax',
+      bullets: [
+        ['Engagements', ['Audited listed (publicly-traded) companies', 'Closed fund books for a bank']],
+      ],
+      stack: [],
+    },
+    {
+      year: '2009', from: '', to: 'Graduated 2009',
+      title: 'Bachelor of Business Administration', org: 'Prince of Songkla University',
+      bullets: [
+        ['Major', ['Accounting Information System']],
+      ],
+      stack: [],
+    },
+  ],
+};
+
+window.OHM = OHM;
+
+</script>
+<script type="text/babel" data-presets="react">
+// variations.jsx — four hero/timeline takes, one per vibe.
+// Each <Variation*> renders inside a fixed-size DCArtboard (520x780 by default).
+// They MUST be internally scrollable (overflow-y:auto) and scope their own
+// scroll-driven animations to the local container.
+
+const { useEffect: _vEf, useRef: _vRf, useState: _vSt } = React;
+const _OHM = window.OHM;
+
+// ─── tiny helpers ───────────────────────────────────────────────────────────
+// IntersectionObserver is unreliable inside the DesignCanvas's transform: scale
+// viewport — its computed intersection vs. the page viewport doesn't match the
+// scroll-root. We use a rect-vs-rect comparison driven by the artboard's own
+// scroll events, plus an initial tick so first-paint elements get marked in.
+function _checkInView(el, root, threshold = 0.18) {
+  if (!el || !root) return false;
+  const er = el.getBoundingClientRect();
+  const rr = root.getBoundingClientRect();
+  const top = Math.max(er.top, rr.top);
+  const bot = Math.min(er.bottom, rr.bottom);
+  const visible = Math.max(0, bot - top);
+  return visible > 0 && (visible / er.height) >= threshold;
+}
+function useInView(opts = {}) {
+  const ref = React.useRef(null);
+  const [seen, setSeen] = React.useState(false);
+  React.useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const root = el.closest('[data-scroll-root]'); if (!root) return;
+    const th = opts.threshold ?? 0.12;
+    let stopped = false;
+    const check = () => {
+      if (stopped) return;
+      if (_checkInView(el, root, th)) { setSeen(true); cleanup(); }
+    };
+    const cleanup = () => { stopped = true; root.removeEventListener('scroll', check); };
+    root.addEventListener('scroll', check, { passive: true });
+    // initial pass + a couple of follow-ups in case layout settles late
+    check();
+    const t1 = setTimeout(check, 60);
+    const t2 = setTimeout(check, 240);
+    return () => { cleanup(); clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+  return [ref, seen];
+}
+
+function useStaggeredIn(count, opts = {}) {
+  const ref = React.useRef(null);
+  const [n, setN] = React.useState(0);
+  React.useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const root = el.closest('[data-scroll-root]'); if (!root) return;
+    let stopped = false;
+    const fire = () => {
+      if (stopped) return;
+      if (!_checkInView(el, root, 0.1)) return;
+      stopped = true;
+      root.removeEventListener('scroll', fire);
+      let i = 0;
+      const step = () => {
+        setN(++i);
+        if (i < count) setTimeout(step, (opts.step ?? 40) / (window.__SPD__ || 1));
+      };
+      step();
+    };
+    root.addEventListener('scroll', fire, { passive: true });
+    fire();
+    const t1 = setTimeout(fire, 80);
+    const t2 = setTimeout(fire, 280);
+    return () => { stopped = true; root.removeEventListener('scroll', fire); clearTimeout(t1); clearTimeout(t2); };
+  }, [count]);
+  return [ref, n];
+}
+
+// Typewriter — types `text` once when in view, with caret.
+function Typewriter({ text, speed = 28, startDelay = 0, caret = true, onDone, style }) {
+  const [ref, seen] = useInView();
+  const [out, setOut] = React.useState('');
+  const [done, setDone] = React.useState(false);
+  React.useEffect(() => {
+    if (!seen) return;
+    let i = 0; let cancelled = false;
+    const start = () => {
+      const tick = () => {
+        if (cancelled) return;
+        i++; setOut(text.slice(0, i));
+        if (i < text.length) setTimeout(tick, speed / (window.__SPD__ || 1));
+        else { setDone(true); onDone && onDone(); }
+      };
+      tick();
+    };
+    const t = setTimeout(start, startDelay / (window.__SPD__ || 1));
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [seen, text]);
+  return (
+    <span ref={ref} style={style}>
+      {out}
+      {caret && !done && <span className="tw-caret">▍</span>}
+    </span>
+  );
+}
+
+// ─── Shared artboard chrome (header / nav / footer) ─────────────────────────
+function PageShell({ children, vibe, themeOverride }) {
+  return (
+    <div data-scroll-root data-vibe={vibe} className={`shell shell-${vibe}`}
+         style={{ width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden',
+                  background: 'var(--bg)', color: 'var(--ink)',
+                  fontFamily: 'var(--sans)', position: 'relative' }}>
+      {children}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// Variation 1 — SUBTLE
+// fade + slight up-translate on view; muted hovers; no theatrics.
+// ════════════════════════════════════════════════════════════════════════════
+function VariationSubtle() {
+  const [stackRef, n] = useStaggeredIn(_OHM.currentStack.length, { step: 28 });
+  return (
+    <PageShell vibe="subtle">
+      <style>{`
+        .shell-subtle .reveal{opacity:0;transform:translateY(10px);
+          transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1)}
+        .shell-subtle .reveal.in{opacity:1;transform:none}
+        .shell-subtle .underline-link{position:relative;color:inherit;text-decoration:none}
+        .shell-subtle .underline-link::after{content:'';position:absolute;left:0;right:0;bottom:-2px;
+          height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;
+          transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+        .shell-subtle .underline-link:hover::after{transform:scaleX(1)}
+        .shell-subtle .chip{transition:background .25s, color .25s, transform .25s}
+        .shell-subtle .chip:hover{background:var(--ink);color:var(--bg);transform:translateY(-1px)}
+        .shell-subtle .ghost-btn{transition:background .3s, color .3s}
+        .shell-subtle .ghost-btn:hover{background:var(--ink);color:var(--bg)}
+        .shell-subtle .stack-pop{opacity:0;transform:translateY(6px);transition:opacity .4s, transform .4s}
+        .shell-subtle .stack-pop.in{opacity:1;transform:none}
+      `}</style>
+      <Nav vibe="subtle" />
+      <Hero vibe="subtle" />
+      <About vibe="subtle" />
+      <section style={S.section}>
+        <SectionHead n="03" t="Currently using" vibe="subtle" />
+        <div ref={stackRef} style={{ display:'flex', flexWrap:'wrap', gap:6, marginTop:18 }}>
+          {_OHM.currentStack.map((s,i) => (
+            <span key={s} className={`chip stack-pop ${i < n ? 'in':''}`}
+              style={{ ...S.chip, transitionDelay:`${i*22}ms` }}>{s}</span>
+          ))}
+        </div>
+      </section>
+      <Timeline vibe="subtle" />
+      <Contact vibe="subtle" />
+      <Footer />
+      <RevealObserver root="subtle" />
+    </PageShell>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// Variation 2 — EDITORIAL
+// big serif display, scroll-driven reveals, animated line-draw timeline,
+// page-load name reveal with mask wipe.
+// ════════════════════════════════════════════════════════════════════════════
+function VariationEditorial() {
+  return (
+    <PageShell vibe="editorial">
+      <style>{`
+        .shell-editorial{font-feature-settings:"ss01","cv11"}
+        .shell-editorial .display{font-family:var(--serif);font-weight:400;letter-spacing:-0.02em;line-height:.95}
+        .shell-editorial .mask-line{display:block;overflow:hidden;padding-bottom:.06em}
+        .shell-editorial .mask-line>span{display:inline-block;transform:translateY(110%);
+          transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+        .shell-editorial .mask-line.in>span{transform:none}
+        .shell-editorial .reveal{opacity:0;transform:translateY(14px);
+          transition:opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1)}
+        .shell-editorial .reveal.in{opacity:1;transform:none}
+        .shell-editorial .marker{display:inline-block;height:1px;width:24px;background:currentColor;
+          vertical-align:middle;margin-right:10px;transform-origin:left;transform:scaleX(0);
+          transition:transform .8s cubic-bezier(.2,.8,.2,1) .15s}
+        .shell-editorial .marker.in{transform:scaleX(1)}
+        .shell-editorial .tl-line{position:absolute;left:0;top:0;width:1px;background:var(--ink);
+          height:0;transition:height 1.4s cubic-bezier(.2,.7,.2,1)}
+        .shell-editorial .tl-line.in{height:100%}
+        .shell-editorial .tl-dot{position:absolute;left:-3px;width:7px;height:7px;border-radius:50%;
+          background:var(--bg);border:1px solid var(--ink);transform:scale(0);
+          transition:transform .5s cubic-bezier(.2,1.6,.5,1)}
+        .shell-editorial .tl-dot.in{transform:scale(1)}
+        .shell-editorial .ghost-btn{transition:background .35s, color .35s, letter-spacing .35s}
+        .shell-editorial .ghost-btn:hover{background:var(--ink);color:var(--bg);letter-spacing:.04em}
+        .shell-editorial .chip{transition:background .25s, color .25s}
+        .shell-editorial .chip:hover{background:var(--ink);color:var(--bg)}
+      `}</style>
+      <Nav vibe="editorial" />
+      <EditorialHero />
+      <About vibe="editorial" />
+      <CurrentStack vibe="editorial" />
+      <Timeline vibe="editorial" />
+      <Contact vibe="editorial" />
+      <Footer />
+      <RevealObserver root="editorial" />
+    </PageShell>
+  );
+}
+
+function EditorialHero() {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const lines = el.querySelectorAll('.mask-line');
+    lines.forEach((ln, i) => setTimeout(() => ln.classList.add('in'), 80 + i * 110));
+  }, []);
+  return (
+    <section ref={ref} style={{ ...S.section, paddingTop: 56, paddingBottom: 32 }}>
+      <div className="mask-line" style={{ ...S.eyebrow }}><span>Hi, I'm</span></div>
+      <h1 className="display" style={{ fontSize: 56, margin: '14px 0 0 0' }}>
+        <span className="mask-line"><span>Patchamet</span></span>
+        <span className="mask-line"><span style={{ fontStyle:'italic', color:'var(--ink-2)' }}>Sriaksorn</span></span>
+        <span className="mask-line"><span>(Ohm <span style={{fontStyle:'italic'}}>Ω</span>)</span></span>
+      </h1>
+      <div className="mask-line" style={{ marginTop: 22, fontSize: 14, letterSpacing:'.16em', textTransform:'uppercase', color:'var(--ink-2)' }}>
+        <span>Fullstack&nbsp;·&nbsp;Developer</span>
+      </div>
+      <p className="mask-line reveal" style={{ marginTop: 28, maxWidth: 380, color:'var(--ink-2)', lineHeight:1.6, fontSize:14.5 }}>
+        <span>{_OHM.intro}</span>
+      </p>
+      <div style={{ display:'flex', gap:8, marginTop: 28, flexWrap:'wrap' }}>
+        <a href="#timeline-editorial" className="ghost-btn" style={S.btnGhost}>See timeline →</a>
+        <a href={`mailto:${_OHM.email}`} className="ghost-btn" style={S.btnGhost}>Get in touch</a>
+      </div>
+    </section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// Variation 3 — TECHNICAL
+// terminal feel, JetBrains mono, typewriter intro, scanline, blinking caret,
+// timeline rendered as `git log`-style.
+// ════════════════════════════════════════════════════════════════════════════
+function VariationTechnical() {
+  const [booted, setBooted] = React.useState(false);
+  return (
+    <PageShell vibe="tech">
+      <style>{`
+        .shell-tech{font-family:var(--mono); font-size:13px; line-height:1.55}
+        .shell-tech .display{font-family:var(--mono);font-weight:600;letter-spacing:-0.01em}
+        .shell-tech .term{padding:0;border-radius:0}
+        .shell-tech .term-bar{display:flex;gap:6px;padding:8px 12px;align-items:center;
+          border-bottom:1px solid var(--line);background:var(--chip);font-size:11px;color:var(--ink-2)}
+        .shell-tech .dot{width:8px;height:8px;border-radius:50%;background:var(--ink-3);opacity:.6}
+        .shell-tech .scanline{position:absolute;inset:0;pointer-events:none;opacity:.04;
+          background:repeating-linear-gradient(to bottom, transparent 0 2px, var(--ink) 2px 3px);
+          mix-blend-mode:multiply}
+        [data-theme="dark"] .shell-tech .scanline{mix-blend-mode:screen;opacity:.05}
+        .shell-tech .tw-caret{display:inline-block;width:1ch;animation:blink 1s step-end infinite;color:var(--ink)}
+        @keyframes blink{50%{opacity:0}}
+        .shell-tech .prompt{color:var(--ink-3)}
+        .shell-tech .ok{color:var(--ink)}
+        .shell-tech .reveal{opacity:0;transform:translateY(8px);
+          transition:opacity .5s ease, transform .5s ease}
+        .shell-tech .reveal.in{opacity:1;transform:none}
+        .shell-tech .pkg{transition:background .15s,color .15s}
+        .shell-tech .pkg:hover{background:var(--ink);color:var(--bg)}
+        .shell-tech .commit:hover{background:var(--chip)}
+        .shell-tech .commit{transition:background .2s}
+        .shell-tech .ghost-btn{font-family:var(--mono);transition:background .2s,color .2s}
+        .shell-tech .ghost-btn:hover{background:var(--ink);color:var(--bg)}
+        .shell-tech .ghost-btn::before{content:'$ '; color:var(--ink-3)}
+        .shell-tech .ghost-btn:hover::before{color:var(--bg)}
+      `}</style>
+      <div className="scanline" />
+      <div className="term-bar">
+        <span className="dot" /><span className="dot" /><span className="dot" />
+        <span style={{ marginLeft: 8 }}>~/ohm — zsh — 80×24</span>
+      </div>
+      <div style={{ padding: '24px 32px 80px' }}>
+        <div>
+          <span className="prompt">guest@ohm:~$ </span>
+          <Typewriter text="whoami" speed={40} onDone={() => setBooted(true)} />
+        </div>
+        {booted && <BootSequence />}
+      </div>
+      <RevealObserver root="tech" />
+    </PageShell>
+  );
+}
+
+function BootSequence() {
+  const [stage, setStage] = React.useState(0);
+  React.useEffect(() => {
+    const ts = [400, 800, 600, 400, 600];
+    let i = 0;
+    const tick = () => {
+      i++; setStage(i);
+      if (i < ts.length) setTimeout(tick, ts[i - 1] / (window.__SPD__ || 1));
+    };
+    setTimeout(tick, ts[0] / (window.__SPD__ || 1));
+  }, []);
+  return (
+    <>
+      <div style={{ marginTop: 6 }}>
+        <span className="ok">patchamet · ohm · Ω · fullstack-developer</span>
+      </div>
+      {stage >= 1 && (
+        <div style={{ marginTop: 14 }}>
+          <div><span className="prompt">guest@ohm:~$ </span><Typewriter text="cat about.md" speed={32} /></div>
+        </div>
+      )}
+      {stage >= 2 && (
+        <pre style={{ margin:'10px 0 0', whiteSpace:'pre-wrap', fontFamily:'inherit', color:'var(--ink-2)', fontSize:12.5 }}>
+{`# Ohm
+
+${_OHM.about.split('. ').map(s => '> ' + s.trim()).join('.\n')}`}
+        </pre>
+      )}
+      {stage >= 3 && (
+        <div style={{ marginTop: 18 }}>
+          <div><span className="prompt">guest@ohm:~$ </span><Typewriter text="ls stack/" speed={28} /></div>
+          <div style={{ marginTop: 8, display:'flex', flexWrap:'wrap', gap:'2px 14px', color:'var(--ink-2)' }}>
+            {_OHM.currentStack.map((s,i) => (
+              <span key={s} className="pkg reveal in"
+                style={{ padding:'1px 4px', transitionDelay:`${i*30}ms` }}>{s.toLowerCase().replace(/[ .#]/g,'-')}</span>
+            ))}
+          </div>
+        </div>
+      )}
+      {stage >= 4 && (
+        <div style={{ marginTop: 22 }}>
+          <div><span className="prompt">guest@ohm:~$ </span><Typewriter text="git log --oneline --decorate" speed={22} /></div>
+          <div style={{ marginTop: 10, display:'flex', flexDirection:'column', gap:2 }}>
+            {_OHM.timeline.map((it, i) => <CommitLine key={i} item={it} idx={i} />)}
+          </div>
+          <div style={{ marginTop: 22 }}>
+            <div><span className="prompt">guest@ohm:~$ </span><Typewriter text="cat contact.txt" speed={28} /></div>
+            <div className="reveal in" style={{ marginTop: 8, color:'var(--ink-2)' }}>
+              email   : <a className="pkg" href={`mailto:${_OHM.email}`} style={{color:'inherit',textDecoration:'none'}}>{_OHM.email}</a><br/>
+              github  : <a className="pkg" href={`https://github.com/${_OHM.github}`} style={{color:'inherit',textDecoration:'none'}}>github.com/{_OHM.github}</a>
+            </div>
+          </div>
+          <div style={{ marginTop: 18 }}>
+            <span className="prompt">guest@ohm:~$ </span><span className="tw-caret">▍</span>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function CommitLine({ item, idx }) {
+  const [ref, seen] = useInView();
+  const hash = (Math.abs(item.year.charCodeAt(0) * 137 + idx * 9001) % 0xfffff).toString(16).padStart(7,'0');
+  return (
+    <div ref={ref} className={`commit reveal ${seen ? 'in':''}`}
+         style={{ display:'grid', gridTemplateColumns:'70px 80px 1fr', gap:8, padding:'2px 4px', borderRadius:2,
+                  transitionDelay:`${idx*40}ms` }}>
+      <span style={{ color:'var(--ink-3)' }}>{hash}</span>
+      <span style={{ color:'var(--ink-2)' }}>({item.year})</span>
+      <span><span style={{color:'var(--ink)'}}>{item.title.toLowerCase()}</span> <span style={{color:'var(--ink-3)'}}>— {item.org}</span></span>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// Variation 4 — PLAYFUL
+// magnetic buttons, marquee tech stack, springy hovers, big hero ribbon.
+// ════════════════════════════════════════════════════════════════════════════
+function VariationPlayful() {
+  return (
+    <PageShell vibe="play">
+      <style>{`
+        .shell-play .display{font-family:var(--sans);font-weight:700;letter-spacing:-0.04em;line-height:.92}
+        .shell-play .reveal{opacity:0;transform:translateY(20px) scale(.98);
+          transition:opacity .8s, transform .8s cubic-bezier(.18,1.4,.4,1)}
+        .shell-play .reveal.in{opacity:1;transform:none}
+        .shell-play .magnet{display:inline-flex;align-items:center;justify-content:center;
+          transition:transform .25s cubic-bezier(.18,1.4,.4,1), background .3s, color .3s}
+        .shell-play .magnet:hover{background:var(--ink);color:var(--bg)}
+        .shell-play .blob{position:absolute;border-radius:50%;filter:blur(40px);opacity:.18;
+          background:var(--ink);pointer-events:none}
+        .shell-play .marquee{display:flex;gap:14px;animation:marq calc(28s / var(--spd-mult, 1)) linear infinite;width:max-content}
+        .shell-play .marquee:hover{animation-play-state:paused}
+        @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+        .shell-play .pill{padding:8px 16px;border:1px solid var(--line-2);border-radius:999px;
+          font-family:var(--mono);font-size:12px;white-space:nowrap;background:var(--bg);
+          transition:transform .25s cubic-bezier(.18,1.4,.4,1), background .25s, color .25s}
+        .shell-play .pill:hover{transform:translateY(-3px) rotate(-2deg);background:var(--ink);color:var(--bg)}
+        .shell-play .tl-card{transition:transform .35s cubic-bezier(.18,1.4,.4,1), border-color .35s}
+        .shell-play .tl-card:hover{transform:translateY(-2px) rotate(-.4deg);border-color:var(--ink)}
+        .shell-play .ohm-symbol{display:inline-block;animation:wobble 6s ease-in-out infinite}
+        @keyframes wobble{
+          0%,100%{transform:rotate(-3deg)}
+          50%{transform:rotate(5deg)}
+        }
+      `}</style>
+      <Nav vibe="play" />
+      <PlayfulHero />
+      <PlayfulMarquee />
+      <About vibe="play" />
+      <Timeline vibe="play" />
+      <Contact vibe="play" />
+      <Footer />
+      <RevealObserver root="play" />
+    </PageShell>
+  );
+}
+
+function PlayfulHero() {
+  return (
+    <section style={{ ...S.section, paddingTop: 48, position:'relative', overflow:'hidden' }}>
+      <div className="blob" style={{ width: 280, height: 280, top: -60, right: -80 }} />
+      <div className="reveal in" style={{ ...S.eyebrow }}>Hi, I'm</div>
+      <h1 className="display reveal in" style={{ fontSize: 60, margin:'10px 0 12px' }}>
+        Patchamet<br/>
+        Sriaksorn<br/>
+        <span style={{ color:'var(--ink-2)' }}>(Ohm <span className="ohm-symbol">Ω</span>)</span>
+      </h1>
+      <div className="reveal in" style={{ fontFamily:'var(--mono)', fontSize: 13, letterSpacing:'.04em', color:'var(--ink-2)', marginBottom: 22 }}>
+        // fullstack developer
+      </div>
+      <p className="reveal in" style={{ maxWidth: 380, color:'var(--ink-2)', lineHeight:1.6, fontSize:14.5, marginBottom: 24 }}>
+        {_OHM.intro}
+      </p>
+      <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+        <MagneticButton href="#timeline-play">See timeline ↓</MagneticButton>
+        <MagneticButton href={`mailto:${_OHM.email}`} secondary>Get in touch</MagneticButton>
+      </div>
+    </section>
+  );
+}
+
+function MagneticButton({ children, href, secondary }) {
+  const ref = React.useRef(null);
+  const onMove = (e) => {
+    const el = ref.current; if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left - r.width/2) * 0.35;
+    const y = (e.clientY - r.top - r.height/2) * 0.35;
+    el.style.transform = `translate(${x}px, ${y}px)`;
+  };
+  const reset = () => { if (ref.current) ref.current.style.transform = ''; };
+  return (
+    <a ref={ref} href={href} className="magnet"
+       onMouseMove={onMove} onMouseLeave={reset}
+       data-cursor-target
+       style={{
+         padding:'12px 22px', borderRadius: 999,
+         border:'1px solid var(--ink)',
+         background: secondary ? 'transparent' : 'var(--ink)',
+         color: secondary ? 'var(--ink)' : 'var(--bg)',
+         fontFamily:'var(--mono)', fontSize: 12, letterSpacing:'.04em',
+         textDecoration:'none',
+       }}>
+      {children}
+    </a>
+  );
+}
+
+function PlayfulMarquee() {
+  const items = [..._OHM.currentStack, ..._OHM.currentStack]; // duplicate for loop
+  return (
+    <section className="full-bleed" style={{ padding:'24px 0 32px', borderTop:'1px solid var(--line)', borderBottom:'1px solid var(--line)', overflow:'hidden' }}>
+      <div className="marquee">
+        {items.map((s, i) => <span key={i} className="pill" data-cursor-target>{s}</span>)}
+      </div>
+    </section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// Variation 5 — PLAYFUL × PROMPT
+// Same layout & playful chrome as D, but the hero copy types itself in like C.
+// Each section has a `> ` prompt prefix that types its title before content.
+// ════════════════════════════════════════════════════════════════════════════
+function VariationPlayPrompt() {
+  return (
+    <PageShell vibe="play">
+      <style>{`
+        .shell-play .display{font-family:var(--sans);font-weight:700;letter-spacing:-0.04em;line-height:.92}
+        .shell-play .reveal{opacity:0;transform:translateY(20px) scale(.98);
+          transition:opacity .8s, transform .8s cubic-bezier(.18,1.4,.4,1)}
+        .shell-play .reveal.in{opacity:1;transform:none}
+        .shell-play .magnet{display:inline-flex;align-items:center;justify-content:center;
+          transition:transform .25s cubic-bezier(.18,1.4,.4,1), background .3s, color .3s}
+        .shell-play .magnet:hover{background:var(--ink);color:var(--bg)}
+        .shell-play .blob{position:absolute;border-radius:50%;filter:blur(40px);opacity:.18;
+          background:var(--ink);pointer-events:none}
+        .shell-play .marquee{display:flex;gap:14px;animation:marq calc(28s / var(--spd-mult, 1)) linear infinite;width:max-content}
+        .shell-play .marquee:hover{animation-play-state:paused}
+        @keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+        .shell-play .pill{padding:8px 16px;border:1px solid var(--line-2);border-radius:999px;
+          font-family:var(--mono);font-size:12px;white-space:nowrap;background:var(--bg);
+          transition:transform .25s cubic-bezier(.18,1.4,.4,1), background .25s, color .25s}
+        .shell-play .pill:hover{transform:translateY(-3px) rotate(-2deg);background:var(--ink);color:var(--bg)}
+        .shell-play .tl-card{transition:transform .35s cubic-bezier(.18,1.4,.4,1), border-color .35s}
+        .shell-play .tl-card:hover{transform:translateY(-2px) rotate(-.4deg);border-color:var(--ink)}
+        .shell-play .ohm-symbol{display:inline-block;animation:wobble 6s ease-in-out infinite}
+        @keyframes wobble{
+          0%,100%{transform:rotate(-3deg)}
+          50%{transform:rotate(5deg)}
+        }
+        .shell-play .tw-caret{display:inline-block;width:1ch;animation:blink 1s step-end infinite;color:var(--ink)}
+        @keyframes blink{50%{opacity:0}}
+        .shell-play .prompt-pre{font-family:var(--mono);color:var(--ink-3);margin-right:8px;font-size:.78em;
+          letter-spacing:.04em}
+        .shell-play .sect-title{display:flex;align-items:baseline;gap:8px}
+      `}</style>
+      <Nav vibe="play" />
+      <PlayfulPromptHero />
+      <PlayfulMarquee />
+      <PromptSection eyebrow="01" title="About" vibe="play">
+        <p className="reveal" style={{ maxWidth: 460, color:'var(--ink-2)', lineHeight:1.7, fontSize:14.5, marginTop: 18 }}>
+          <PromptOnView text={_OHM.about} speed={6} />
+        </p>
+        <p className="reveal" style={{ maxWidth: 460, color:'var(--ink-3)', lineHeight:1.7, fontSize:13, marginTop: 14, fontStyle:'italic' }}>
+          This site is a slow project to keep my own work in one place.
+        </p>
+      </PromptSection>
+      <PromptSection eyebrow="02" title="Timeline" vibe="play" id="timeline-play">
+        <div style={{ position:'relative', marginTop: 28, paddingLeft: 22 }}>
+          <TimelineLine />
+          <ol style={{ listStyle:'none', margin:0, padding:0, display:'flex', flexDirection:'column', gap: 28 }}>
+            {_OHM.timeline.map((it, i) => <TimelineItem key={i} item={it} idx={i} vibe="play" />)}
+          </ol>
+        </div>
+      </PromptSection>
+      <PromptSection eyebrow="03" title="Contact" vibe="play" id="contact-play">
+        <p className="reveal" style={{ marginTop: 18, color:'var(--ink-2)', fontSize:14.5, lineHeight:1.7 }}>
+          Best reached by email at{' '}
+          <a className="underline-link" href={`mailto:${_OHM.email}`} style={{ color:'var(--ink)', textDecoration:'none' }}>{_OHM.email}</a>.<br />
+          Also on{' '}
+          <a className="underline-link" href={`https://github.com/${_OHM.github}`} style={{ color:'var(--ink)', textDecoration:'none' }}>GitHub</a>.
+        </p>
+      </PromptSection>
+      <Footer />
+      <RevealObserver root="play" />
+    </PageShell>
+  );
+}
+
+function PlayfulPromptHero() {
+  // Sequence: eyebrow → name lines (mask reveal) → role typed → intro typed → buttons fade
+  const [step, setStep] = React.useState(0);
+  React.useEffect(() => {
+    const m = window.__SPD__ || 1;
+    const ts = [120, 700, 700, 700, 600];
+    let i = 0;
+    const tick = () => { i++; setStep(i); if (i < ts.length) setTimeout(tick, ts[i]/m); };
+    setTimeout(tick, ts[0]/m);
+  }, []);
+  return (
+    <section style={{ ...S.section, paddingTop: 48, position:'relative', overflow:'hidden' }}>
+      <div className="blob" style={{ width: 280, height: 280, top: -60, right: -80 }} />
+      <div style={{ ...S.eyebrow, opacity: step >= 1 ? 1 : 0, transition:'opacity .4s' }}>
+        <span className="prompt-pre">$ whoami</span>
+      </div>
+      <h1 className="display" style={{ fontSize: 60, margin:'14px 0 12px', minHeight: 60*3*0.92 }}>
+        {step >= 2 && <PromptLine text="Patchamet" speed={28} />}
+        {step >= 2 && <br/>}
+        {step >= 2 && <PromptLine text="Sriaksorn" speed={28} startDelay={400} />}
+        {step >= 2 && <br/>}
+        {step >= 2 && (
+          <span style={{ color:'var(--ink-2)' }}>
+            <PromptLine text="(Ohm " speed={28} startDelay={900} caretAfter={false} />
+            {step >= 3 && <span className="ohm-symbol">Ω</span>}
+            {step >= 3 && <PromptLine text=")" speed={28} startDelay={50} caretAfter={false} />}
+          </span>
+        )}
+      </h1>
+      <div style={{ fontFamily:'var(--mono)', fontSize: 13, letterSpacing:'.04em', color:'var(--ink-2)', marginBottom: 22, minHeight: 18 }}>
+        {step >= 3 && <><span className="prompt-pre">// </span><PromptLine text="fullstack developer" speed={22} /></>}
+      </div>
+      <p style={{ maxWidth: 380, color:'var(--ink-2)', lineHeight:1.6, fontSize:14.5, marginBottom: 24, minHeight: 70 }}>
+        {step >= 4 && <PromptLine text={_OHM.intro} speed={8} />}
+      </p>
+      <div style={{ display:'flex', gap:10, flexWrap:'wrap', opacity: step >= 5 ? 1 : 0,
+                    transform: step >= 5 ? 'none' : 'translateY(8px)',
+                    transition:'opacity .5s, transform .5s cubic-bezier(.18,1.4,.4,1)' }}>
+        <MagneticButton href="#timeline-play">See timeline ↓</MagneticButton>
+        <MagneticButton href={`mailto:${_OHM.email}`} secondary>Get in touch</MagneticButton>
+      </div>
+    </section>
+  );
+}
+
+// PromptLine — types text with caret. Once mounted, plays once.
+function PromptLine({ text, speed = 22, startDelay = 0, caretAfter = true }) {
+  const [out, setOut] = React.useState('');
+  const [done, setDone] = React.useState(false);
+  React.useEffect(() => {
+    let cancelled = false;
+    const m = window.__SPD__ || 1;
+    let i = 0;
+    const tick = () => {
+      if (cancelled) return;
+      i++; setOut(text.slice(0, i));
+      if (i < text.length) setTimeout(tick, speed/m);
+      else setDone(true);
+    };
+    const t = setTimeout(tick, startDelay/m);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, []);
+  return (
+    <span>{out}{caretAfter && !done && <span className="tw-caret">▍</span>}</span>
+  );
+}
+
+// PromptOnView — types text when its container scrolls into view.
+function PromptOnView({ text, speed = 8 }) {
+  const [ref, seen] = useInView({ threshold: 0.05 });
+  const [out, setOut] = React.useState('');
+  const [done, setDone] = React.useState(false);
+  React.useEffect(() => {
+    if (!seen) return;
+    let cancelled = false;
+    const m = window.__SPD__ || 1;
+    let i = 0;
+    const tick = () => {
+      if (cancelled) return;
+      i++; setOut(text.slice(0, i));
+      if (i < text.length) setTimeout(tick, speed/m);
+      else setDone(true);
+    };
+    tick();
+    return () => { cancelled = true; };
+  }, [seen]);
+  return <span ref={ref}>{out}{!done && seen && <span className="tw-caret">▍</span>}</span>;
+}
+
+// PromptSection — section header types its title via prompt animation when in view.
+function PromptSection({ eyebrow, title, vibe, id, children }) {
+  const [ref, seen] = useInView({ threshold: 0.1 });
+  return (
+    <section ref={ref} id={id} style={S.section}>
+      <div className="reveal" style={{ display:'flex', alignItems:'baseline', gap:12, borderBottom:'1px solid var(--line)', paddingBottom: 10 }}>
+        <span style={{ fontFamily:'var(--mono)', fontSize:11, color:'var(--ink-3)', letterSpacing:'.06em' }}>{eyebrow}</span>
+        <h2 style={{ margin:0, fontSize: 18, fontWeight: 600, fontFamily:'var(--sans)', letterSpacing:'0', display:'flex', alignItems:'baseline', gap:6 }}>
+          <span className="prompt-pre">$ cat</span>
+          {seen ? <PromptLine text={title.toLowerCase()} speed={28} /> : <span style={{ visibility:'hidden' }}>{title.toLowerCase()}</span>}
+        </h2>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+// ─── Shared building blocks ─────────────────────────────────────────────────
+
+function Nav({ vibe }) {
+  const isMono = vibe === 'play' || vibe === 'editorial';
+  return (
+    <nav style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+                  padding:'18px 32px', position:'sticky', top:0, zIndex:5,
+                  background:'color-mix(in srgb, var(--bg) 88%, transparent)',
+                  backdropFilter:'blur(10px)',
+                  borderBottom:'1px solid var(--line)' }}>
+      <a href="#" style={{ fontFamily: isMono ? 'var(--mono)' : 'var(--sans)',
+                           color:'var(--ink)', textDecoration:'none', fontWeight: 600, fontSize: 13,
+                           letterSpacing: isMono ? '.04em' : '0' }}>
+        <span style={{ fontFamily:'var(--serif)', fontStyle:'italic', fontSize: 18, marginRight: 4 }}>Ω</span>
+        Ohm
+      </a>
+      <div style={{ display:'flex', gap: 22, fontSize: 12.5, fontFamily: isMono ? 'var(--mono)':'var(--sans)' }}>
+        {['About','Timeline','Contact'].map(l => (
+          <a key={l} href={`#${l.toLowerCase()}-${vibe}`} className="underline-link"
+             style={{ color:'var(--ink-2)', textDecoration:'none', position:'relative', padding:'2px 0' }}>{l}</a>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
+function Hero({ vibe }) {
+  return (
+    <section style={{ ...S.section, paddingTop: 56, paddingBottom: 32 }}>
+      <div className="reveal" style={S.eyebrow}>Hi, I'm</div>
+      <h1 className="reveal" style={{ fontSize: 38, fontWeight: 600, letterSpacing:'-0.02em', lineHeight:1.05, margin:'14px 0 12px' }}>
+        Patchamet Sriaksorn <span style={{ color:'var(--ink-2)' }}>(Ohm Ω)</span>
+      </h1>
+      <div className="reveal" style={{ fontSize: 14, color:'var(--ink-2)', marginBottom: 22, fontFamily:'var(--mono)' }}>
+        Fullstack Developer
+      </div>
+      <p className="reveal" style={{ maxWidth: 380, color:'var(--ink-2)', lineHeight:1.6, fontSize:14.5 }}>
+        {_OHM.intro}
+      </p>
+      <div style={{ display:'flex', gap:8, marginTop: 26, flexWrap:'wrap' }}>
+        <a href={`#timeline-${vibe}`} className="ghost-btn" style={S.btnGhost}>See my timeline</a>
+        <a href={`mailto:${_OHM.email}`} className="ghost-btn" style={S.btnGhost}>Get in touch</a>
+      </div>
+    </section>
+  );
+}
+
+function About({ vibe }) {
+  return (
+    <section id={`about-${vibe}`} style={S.section}>
+      <SectionHead n="01" t="About" vibe={vibe} />
+      <p className="reveal" style={{ maxWidth: 460, color:'var(--ink-2)', lineHeight:1.7, fontSize:14.5, marginTop: 18 }}>
+        {_OHM.about}
+      </p>
+      <p className="reveal" style={{ maxWidth: 460, color:'var(--ink-3)', lineHeight:1.7, fontSize:13, marginTop: 14, fontStyle:'italic' }}>
+        This site is a slow project to keep my own work in one place.
+      </p>
+    </section>
+  );
+}
+
+function CurrentStack({ vibe }) {
+  return (
+    <section style={S.section}>
+      <SectionHead n="02" t="Currently using" vibe={vibe} />
+      <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginTop:18 }}>
+        {_OHM.currentStack.map((s,i) => (
+          <span key={s} className="chip reveal" style={{ ...S.chip, transitionDelay:`${i*22}ms` }}>{s}</span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Timeline({ vibe }) {
+  return (
+    <section id={`timeline-${vibe}`} style={{ ...S.section, paddingTop: 36 }}>
+      <SectionHead n={vibe === 'subtle' ? '04' : (vibe === 'editorial' ? '03' : '03')} t="Timeline" vibe={vibe} />
+      <div style={{ position:'relative', marginTop: 28, paddingLeft: 22 }}>
+        <TimelineLine />
+        <ol style={{ listStyle:'none', margin:0, padding:0, display:'flex', flexDirection:'column', gap: 28 }}>
+          {_OHM.timeline.map((it, i) => <TimelineItem key={i} item={it} idx={i} vibe={vibe} />)}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+function TimelineLine() {
+  const [ref, seen] = useInView({ threshold: 0.05 });
+  return (
+    <div ref={ref} className={`tl-line ${seen ? 'in':''}`}
+         style={{ position:'absolute', left:0, top:0, width:1, background:'var(--line-2)',
+                  height: seen ? '100%' : 0, transition:'height 1.4s cubic-bezier(.2,.7,.2,1)' }} />
+  );
+}
+
+function TimelineItem({ item, idx, vibe }) {
+  const [ref, seen] = useInView();
+  return (
+    <li ref={ref} className={`tl-card reveal ${seen ? 'in':''}`}
+        style={{ position:'relative', transitionDelay:`${idx*60}ms`, padding:'2px 4px 14px 14px',
+                 borderLeft: vibe === 'play' ? '1px solid var(--line)' : 'none',
+                 marginLeft: -1 }}>
+      <span className={`tl-dot ${seen ? 'in':''}`}
+            style={{ position:'absolute', left:-25, top:6, width:8, height:8, borderRadius:'50%',
+                     background:'var(--bg)', border:'1px solid var(--ink)',
+                     transform: seen ? 'scale(1)':'scale(0)',
+                     transition:'transform .5s cubic-bezier(.2,1.6,.5,1) ' + (idx*60+200) + 'ms' }} />
+      <div style={{ fontFamily:'var(--mono)', fontSize:11, color:'var(--ink-3)', letterSpacing:'.06em' }}>
+        {item.year.toUpperCase()}
+      </div>
+      <h3 style={{ margin:'4px 0 2px', fontSize: 17, fontWeight: 600, letterSpacing:'-0.01em',
+                   fontFamily: vibe === 'editorial' ? 'var(--serif)' : 'var(--sans)' }}>
+        {item.title}
+      </h3>
+      <div style={{ fontSize: 12.5, color:'var(--ink-2)', marginBottom: 8 }}>
+        {item.from && <span>{item.from} – {item.to} · </span>}
+        {!item.from && <span>{item.to} · </span>}
+        <span>{item.org}</span>
+      </div>
+      {item.bullets.map(([label, items]) => (
+        <div key={label} style={{ display:'grid', gridTemplateColumns:'90px 1fr', gap:8, marginTop:6 }}>
+          <div style={{ fontFamily:'var(--mono)', fontSize:11, color:'var(--ink-3)', textTransform:'lowercase', paddingTop:2 }}>
+            {label.toLowerCase()}
+          </div>
+          <ul style={{ margin:0, padding:0, listStyle:'none', fontSize:13, color:'var(--ink-2)', lineHeight:1.55 }}>
+            {items.map((b,i) => <li key={i}>{b}</li>)}
+          </ul>
+        </div>
+      ))}
+      {item.stack.length > 0 && (
+        <div style={{ display:'flex', flexWrap:'wrap', gap:5, marginTop:12 }}>
+          {item.stack.map(s => <span key={s} className="chip" style={{ ...S.chipSm }}>{s}</span>)}
+        </div>
+      )}
+    </li>
+  );
+}
+
+function Contact({ vibe }) {
+  return (
+    <section id={`contact-${vibe}`} style={{ ...S.section, paddingTop: 40, paddingBottom: 60 }}>
+      <SectionHead n={vibe === 'subtle' ? '05' : '04'} t="Contact" vibe={vibe} />
+      <p className="reveal" style={{ marginTop: 18, color:'var(--ink-2)', fontSize:14.5, lineHeight:1.7 }}>
+        Best reached by email at{' '}
+        <a className="underline-link" href={`mailto:${_OHM.email}`} style={{ color:'var(--ink)', textDecoration:'none' }}>
+          {_OHM.email}
+        </a>
+        .<br />
+        Also on{' '}
+        <a className="underline-link" href={`https://github.com/${_OHM.github}`} style={{ color:'var(--ink)', textDecoration:'none' }}>
+          GitHub
+        </a>
+        .
+      </p>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer style={{ padding:'24px 32px 40px', borderTop:'1px solid var(--line)', marginTop: 40,
+                     fontFamily:'var(--mono)', fontSize:11, color:'var(--ink-3)',
+                     display:'flex', justifyContent:'space-between' }}>
+      <span>© 2026 Patchamet Sriaksorn</span>
+      <span>made by hand</span>
+    </footer>
+  );
+}
+
+function SectionHead({ n, t, vibe }) {
+  return (
+    <div className="reveal" style={{ display:'flex', alignItems:'baseline', gap:12, borderBottom:'1px solid var(--line)', paddingBottom: 10 }}>
+      <span className={vibe === 'editorial' ? 'marker' : ''}
+            style={{ fontFamily:'var(--mono)', fontSize:11, color:'var(--ink-3)', letterSpacing:'.06em' }}>
+        {n}
+      </span>
+      <h2 style={{ margin:0, fontSize: vibe === 'editorial' ? 28 : 18, fontWeight: vibe === 'editorial' ? 400 : 600,
+                   fontFamily: vibe === 'editorial' ? 'var(--serif)' : 'var(--sans)',
+                   letterSpacing: vibe === 'editorial' ? '-0.01em' : '0' }}>
+        {t}
+      </h2>
+    </div>
+  );
+}
+
+// ─── Reveal observer — adds .in to .reveal as they enter root viewport ──────
+function RevealObserver({ root }) {
+  React.useEffect(() => {
+    const scope = document.querySelector(`.shell-${root}`);
+    if (!scope) return;
+    let stopped = false;
+    const scan = () => {
+      if (stopped) return;
+      const els = scope.querySelectorAll('.reveal:not(.in), .marker:not(.in), .mask-line:not(.in)');
+      if (!els.length) { cleanup(); return; }
+      const rr = scope.getBoundingClientRect();
+      els.forEach(el => {
+        const er = el.getBoundingClientRect();
+        const top = Math.max(er.top, rr.top);
+        const bot = Math.min(er.bottom, rr.bottom);
+        const visible = Math.max(0, bot - top);
+        const ratio = er.height ? visible / er.height : 0;
+        if (visible > 0 && ratio >= 0.08) el.classList.add('in');
+      });
+    };
+    const cleanup = () => { stopped = true; scope.removeEventListener('scroll', scan); };
+    scope.addEventListener('scroll', scan, { passive: true });
+    // Multiple scans to catch late-mounted children + post-layout settle
+    const ts = [0, 80, 240, 600, 1200].map(d => setTimeout(scan, d));
+    return () => { cleanup(); ts.forEach(clearTimeout); };
+  }, [root]);
+  return null;
+}
+
+// ─── style atoms ────────────────────────────────────────────────────────────
+const S = {
+  section: { padding: '32px 32px' },
+  eyebrow: { fontFamily: 'var(--mono)', fontSize: 11, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--ink-3)' },
+  chip: { padding:'4px 9px', border:'1px solid var(--line-2)', borderRadius: 999, fontSize: 11.5,
+          fontFamily:'var(--mono)', color:'var(--ink-2)', background:'var(--bg)' },
+  chipSm: { padding:'3px 7px', border:'1px solid var(--line)', borderRadius: 4, fontSize: 10.5,
+            fontFamily:'var(--mono)', color:'var(--ink-3)', background:'transparent' },
+  btnGhost: { padding:'10px 16px', border:'1px solid var(--ink)', color:'var(--ink)',
+              textDecoration:'none', fontSize: 12.5, fontFamily:'var(--mono)',
+              letterSpacing:'.04em', background:'transparent' },
+};
+
+Object.assign(window, {
+  VariationSubtle, VariationEditorial, VariationTechnical, VariationPlayful, VariationPlayPrompt,
+});
+
+</script>
+<script type="text/babel" data-presets="react">
+// app-e.jsx — solo E variant with Dark/Light header toggle
+const E_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "light",
+  "speed": "normal",
+  "reduceMotion": false
+}/*EDITMODE-END*/;
+const E_SPEED_MULT = { slow: 0.55, normal: 1, fast: 1.7 };
+
+function ThemeToggle({ theme, onToggle }) {
+  const dark = theme === 'dark';
+  return (
+    <button onClick={onToggle} aria-label="Toggle theme" data-cursor-target
+      style={{
+        position: 'fixed', top: 18, right: 20, zIndex: 50,
+        width: 42, height: 42, borderRadius: '999px',
+        border: '1px solid var(--line-2)', background: 'var(--bg)',
+        color: 'var(--ink)', cursor: 'pointer', display: 'flex',
+        alignItems: 'center', justifyContent: 'center',
+        fontFamily: 'var(--mono)', fontSize: 16,
+        transition: 'background .35s, color .35s, border-color .35s, transform .25s cubic-bezier(.18,1.4,.4,1)',
+        backdropFilter: 'blur(8px)',
+      }}
+      onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08) rotate(-12deg)'}
+      onMouseLeave={e => e.currentTarget.style.transform = ''}
+    >
+      <span key={theme} style={{ display: 'inline-block', animation: 'theme-pop .4s cubic-bezier(.2,1.6,.5,1)' }}>
+        {dark ? '☾' : '☀'}
+      </span>
+      <style>{`
+        @keyframes theme-pop {
+          0% { transform: scale(.4) rotate(-90deg); opacity: 0 }
+          100% { transform: scale(1) rotate(0); opacity: 1 }
+        }
+      `}</style>
+    </button>
+  );
+}
+
+function EApp() {
+  const [theme, setTheme] = React.useState(() => {
+    try { return localStorage.getItem('ohm-theme') || E_DEFAULTS.theme; } catch (_) { return E_DEFAULTS.theme; }
+  });
+  const speed = E_DEFAULTS.speed;
+  const reduceMotion = E_DEFAULTS.reduceMotion;
+
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-rm', reduceMotion ? 'on' : 'off');
+    const m = E_SPEED_MULT[speed] || 1;
+    window.__SPD__ = m;
+    document.documentElement.style.setProperty('--spd-mult', String(m));
+    try { localStorage.setItem('ohm-theme', theme); } catch (_) {}
+  }, [theme, speed, reduceMotion]);
+
+  return (
+    <div style={{
+      minHeight: '100vh', background: 'var(--bg)', color: 'var(--ink)',
+      transition: 'background .35s, color .35s',
+    }}>
+      <ThemeToggle theme={theme} onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')} />
+      <style>{`
+        /* Standalone full-width layout — mirrors the original site:
+           nav and marquee span full viewport, content sections center at ~720px. */
+        .shell-play.standalone > nav { padding-left: clamp(20px, 4vw, 56px); padding-right: clamp(20px, 4vw, 56px); }
+        .shell-play.standalone > section { max-width: 760px; margin-left: auto; margin-right: auto;
+          padding-left: clamp(20px, 4vw, 32px); padding-right: clamp(20px, 4vw, 32px); }
+        /* Marquee section is full-bleed (no max-width) */
+        .shell-play.standalone > section.full-bleed { max-width: none; padding-left: 0; padding-right: 0; }
+        .shell-play.standalone > footer { max-width: 760px; margin-left: auto; margin-right: auto;
+          padding-left: clamp(20px, 4vw, 32px); padding-right: clamp(20px, 4vw, 32px); }
+      `}</style>
+      <div data-scroll-root className="shell shell-play standalone"
+        style={{
+          width: '100%', minHeight: '100vh',
+          background: 'var(--bg)', color: 'var(--ink)', fontFamily: 'var(--sans)',
+          position: 'relative',
+        }}>
+        <VariationPlayPrompt />
+      </div>
+      <WindowRevealObserver />
+    </div>
+  );
+}
+
+// In standalone mode the data-scroll-root wrapper doesn't itself scroll —
+// the window does. Re-scan reveal targets on window scroll using the viewport.
+function WindowRevealObserver() {
+  React.useEffect(() => {
+    const scope = document.querySelector('.shell-play');
+    if (!scope) return;
+    let stopped = false;
+    const scan = () => {
+      if (stopped) return;
+      const els = scope.querySelectorAll('.reveal:not(.in), .marker:not(.in), .mask-line:not(.in)');
+      const vh = window.innerHeight;
+      els.forEach(el => {
+        const er = el.getBoundingClientRect();
+        const top = Math.max(er.top, 0);
+        const bot = Math.min(er.bottom, vh);
+        const visible = Math.max(0, bot - top);
+        const ratio = er.height ? visible / er.height : 0;
+        if (visible > 0 && ratio >= 0.05) el.classList.add('in');
+      });
+      if (!els.length) cleanup();
+    };
+    const cleanup = () => { stopped = true; window.removeEventListener('scroll', scan); };
+    window.addEventListener('scroll', scan, { passive: true });
+    [0, 80, 240, 600, 1200, 2400].forEach(d => setTimeout(scan, d));
+    return cleanup;
+  }, []);
+  return null;
+}
+
+// Patch _checkInView so useInView (which finds the data-scroll-root) ALSO
+// considers the window viewport — needed when the scroll-root itself isn't
+// the scroll container (standalone page).
+const _origCheck = window._checkInView;
+window._checkInView = function(el, root, threshold = 0.1) {
+  if (!el) return false;
+  const er = el.getBoundingClientRect();
+  const vh = window.innerHeight;
+  // Window-relative
+  const wTop = Math.max(er.top, 0);
+  const wBot = Math.min(er.bottom, vh);
+  const wVis = Math.max(0, wBot - wTop);
+  const wRatio = er.height ? wVis / er.height : 0;
+  if (wRatio >= threshold) return true;
+  // Fall through to root-relative
+  if (_origCheck) return _origCheck(el, root, threshold);
+  return false;
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<EApp />);
+
+</script>
+</body>
+</html>

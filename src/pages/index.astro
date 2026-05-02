@@ -242,7 +242,7 @@ const currentStack = currentJob?.stack ?? [];
   <main>
     <section class="hero container" id="top">
       <p class="eyebrow">Hi, I'm</p>
-      <h1>{me.fullName} <span class="alt-name">({me.nickname} <span class="wordmark">Ω</span>)</span></h1>
+      <h1>{me.fullName} <span class="alt-name">({me.nickname} <span class="wordmark wobble">Ω</span>)</span></h1>
       <p class="title">{me.title}</p>
       <p class="blurb">{me.blurb}</p>
       <div class="cta">
@@ -251,7 +251,7 @@ const currentStack = currentJob?.stack ?? [];
       </div>
     </section>
 
-    <section class="section container" id="about">
+    <section class="section container reveal" id="about">
       <h2>About</h2>
       <p>
         I've been writing software since 2010, with a BBA in accounting before that.
@@ -266,7 +266,7 @@ const currentStack = currentJob?.stack ?? [];
     <section class="section container" id="timeline">
       <h2>Timeline</h2>
       {currentStack.length > 0 && (
-        <div class="now">
+        <div class="now reveal">
           <span class="now-label">Currently using</span>
           <ul class="now-stack">
             {currentStack.map((t) => <li>{t}</li>)}
@@ -277,7 +277,7 @@ const currentStack = currentJob?.stack ?? [];
         {timeline.map((e) => {
           const anchor = e.kind === "project" ? `project-${e.id}` : undefined;
           return (
-            <li class={`tl-entry tl-${e.kind}`} id={anchor}>
+            <li class={`tl-entry tl-${e.kind} reveal`} id={anchor}>
               <span class="tl-year">{yearLabel(e.endYear)}</span>
               <span class="tl-dot" aria-hidden="true"></span>
               <div class="tl-card">
@@ -368,11 +368,11 @@ const currentStack = currentJob?.stack ?? [];
       </ol>
     </section>
 
-    <section class="section container" id="contact">
+    <section class="section container reveal" id="contact">
       <h2>Contact</h2>
       <p>
-        Best reached by email at <a href={`mailto:${me.email}`}>{me.email}</a>.
-        Also on <a href={me.social.github}>GitHub</a>.
+        Best reached by email at <a class="underline-link" href={`mailto:${me.email}`}>{me.email}</a>.
+        Also on <a class="underline-link" href={me.social.github}>GitHub</a>.
       </p>
     </section>
   </main>
@@ -520,11 +520,16 @@ const currentStack = currentJob?.stack ?? [];
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     padding: var(--space-6);
-    transition: border-color 160ms ease, transform 160ms ease;
+    transition:
+      transform 0.35s var(--ease-overshoot),
+      border-color 0.35s;
   }
-  .tl-card:hover { border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-border)); }
+  .tl-card:hover {
+    transform: translateY(-2px) rotate(-0.4deg);
+    border-color: var(--ink);
+  }
   .tl-project .tl-card {
-    border-color: color-mix(in srgb, var(--color-accent) 30%, var(--color-border));
+    border-color: color-mix(in srgb, var(--ink) 30%, var(--line-2));
   }
 
   .tl-head {

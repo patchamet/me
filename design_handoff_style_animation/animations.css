@@ -1,0 +1,212 @@
+/* animations.css — keyframes + utility classes
+   Toggle `.in` on a `.reveal` (or `.mask-line`, `.marker`) when it enters viewport. */
+
+/* ─── A. Reveal — generic fade + lift ────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px) scale(.98);
+  transition: opacity .8s, transform .8s var(--ease-overshoot, cubic-bezier(.18,1.4,.4,1));
+}
+.reveal.in { opacity: 1; transform: none; }
+
+/* Smaller / quicker variant */
+.reveal-sm {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.reveal-sm.in { opacity: 1; transform: none; }
+
+/* ─── B. Editorial mask-line ─────────────────────────────────────────── */
+.mask-line { display: block; overflow: hidden; padding-bottom: .06em; }
+.mask-line > span {
+  display: inline-block;
+  transform: translateY(110%);
+  transition: transform 1s cubic-bezier(.2, .8, .2, 1);
+}
+.mask-line.in > span { transform: none; }
+
+/* ─── C. Underline link ──────────────────────────────────────────────── */
+.underline-link { position: relative; color: inherit; text-decoration: none; }
+.underline-link::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s var(--ease-smooth, cubic-bezier(.2,.7,.2,1));
+}
+.underline-link:hover::after { transform: scaleX(1); }
+
+/* ─── D. Pill / chip ─────────────────────────────────────────────────── */
+.pill {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: nowrap;
+  background: var(--bg);
+  color: var(--ink);
+  transition: transform .25s var(--ease-overshoot, cubic-bezier(.18,1.4,.4,1)),
+              background .25s, color .25s;
+}
+.pill:hover {
+  transform: translateY(-3px) rotate(-2deg);
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.chip {
+  padding: 4px 9px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-family: var(--mono);
+  color: var(--ink-2);
+  background: var(--bg);
+  transition: background .25s, color .25s, transform .25s;
+}
+.chip:hover {
+  background: var(--ink);
+  color: var(--bg);
+  transform: translateY(-1px);
+}
+
+/* ─── E. Marquee (infinite scroll) ───────────────────────────────────── */
+.marquee {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  animation: marq calc(28s / var(--spd-mult, 1)) linear infinite;
+}
+.marquee:hover { animation-play-state: paused; }
+@keyframes marq {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── F. Magnetic button (transform set by JS — see hooks.jsx) ───────── */
+.magnet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .04em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform .25s var(--ease-overshoot, cubic-bezier(.18,1.4,.4,1)),
+              background .3s, color .3s;
+}
+.magnet--secondary {
+  background: transparent;
+  color: var(--ink);
+}
+.magnet:hover { background: var(--ink); color: var(--bg); }
+.magnet--secondary:hover { background: var(--ink); color: var(--bg); }
+
+/* ─── G. Typewriter caret ────────────────────────────────────────────── */
+.tw-caret {
+  display: inline-block;
+  width: 1ch;
+  animation: blink 1s step-end infinite;
+  color: var(--ink);
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ─── H. Prompt prefix ───────────────────────────────────────────────── */
+.prompt-pre {
+  font-family: var(--mono);
+  color: var(--ink-3);
+  margin-right: 8px;
+  font-size: .78em;
+  letter-spacing: .04em;
+}
+
+/* ─── I. Wobble (Ω, decorative glyphs) ───────────────────────────────── */
+.wobble { display: inline-block; animation: wobble 6s ease-in-out infinite; }
+@keyframes wobble {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(5deg); }
+}
+
+/* ─── J. Marker (horizontal line wipe-in) ────────────────────────────── */
+.marker {
+  display: inline-block;
+  height: 1px;
+  width: 24px;
+  background: currentColor;
+  vertical-align: middle;
+  margin-right: 10px;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform .8s cubic-bezier(.2, .8, .2, 1) .15s;
+}
+.marker.in { transform: scaleX(1); }
+
+/* ─── K. Timeline ────────────────────────────────────────────────────── */
+.tl-line {
+  position: absolute;
+  left: 0; top: 0;
+  width: 1px;
+  height: 0;
+  background: var(--ink);
+  transition: height 1.4s var(--ease-smooth, cubic-bezier(.2,.7,.2,1));
+}
+.tl-line.in { height: 100%; }
+
+.tl-dot {
+  position: absolute;
+  left: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--ink);
+  transform: scale(0);
+  transition: transform .5s var(--ease-pop, cubic-bezier(.2,1.6,.5,1));
+}
+.tl-dot.in { transform: scale(1); }
+/* Stagger via inline `style="transition-delay: Nms"` per item */
+
+.tl-card {
+  transition: transform .35s var(--ease-overshoot, cubic-bezier(.18,1.4,.4,1)),
+              border-color .35s;
+}
+.tl-card:hover {
+  transform: translateY(-2px) rotate(-.4deg);
+  border-color: var(--ink);
+}
+
+/* ─── L. Theme toggle (icon pop) ─────────────────────────────────────── */
+@keyframes theme-pop {
+  0%   { transform: scale(.4) rotate(-90deg); opacity: 0; }
+  100% { transform: scale(1)  rotate(0);      opacity: 1; }
+}
+
+/* ─── M. Decorative blob ─────────────────────────────────────────────── */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: .18;
+  background: var(--ink);
+  pointer-events: none;
+}
+
+/* ─── N. Stack pop (small staggered fades) ───────────────────────────── */
+.stack-pop {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .4s, transform .4s;
+}
+.stack-pop.in { opacity: 1; transform: none; }

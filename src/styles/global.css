@@ -1,15 +1,43 @@
+/* Global styles — design system from /design_handoff_style_animation
+   Layout/spacing tokens (--space-*) and component padding/margin are
+   intentionally preserved from the previous version. */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 :root {
-  --color-bg: #0b0d10;
-  --color-surface: #14171c;
-  --color-border: #232830;
-  --color-text: #e6e8ec;
-  --color-text-muted: #9aa3ad;
-  --color-accent: #7cc4ff;
-  --color-accent-soft: rgba(124, 196, 255, 0.12);
+  /* — Color tokens (light, default) — */
+  --bg:     #fafaf7;
+  --ink:    #16140f;
+  --ink-2:  rgba(22, 20, 15, 0.62);
+  --ink-3:  rgba(22, 20, 15, 0.38);
+  --line:   rgba(22, 20, 15, 0.10);
+  --line-2: rgba(22, 20, 15, 0.18);
+  --chip:   rgba(22, 20, 15, 0.04);
+  --accent: #16140f;
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Sarabun", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+  /* — Backward-compat aliases for existing component CSS — */
+  --color-bg:           var(--bg);
+  --color-surface:      var(--bg);
+  --color-border:       var(--line-2);
+  --color-text:         var(--ink);
+  --color-text-muted:   var(--ink-2);
+  --color-accent:       var(--accent);
+  --color-accent-soft:  var(--chip);
 
+  /* — Typography — */
+  --font-serif: 'Instrument Serif', 'Times New Roman', serif;
+  --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* — Easings — */
+  --ease-overshoot: cubic-bezier(0.18, 1.4, 0.4, 1);
+  --ease-smooth:    cubic-bezier(0.2,  0.7, 0.2, 1);
+  --ease-pop:       cubic-bezier(0.2,  1.6, 0.5, 1);
+
+  /* — Optional global speed multiplier — */
+  --spd-mult: 1;
+
+  /* — Spacing — UNCHANGED from previous version — */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -19,22 +47,38 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
+  /* — Radius — UNCHANGED from previous version — */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
 
+  /* — Container — UNCHANGED — */
   --container-max: 64rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --color-bg: #fafafa;
-    --color-surface: #ffffff;
-    --color-border: #e6e8ec;
-    --color-text: #14171c;
-    --color-text-muted: #5b6470;
-    --color-accent: #1666c4;
-    --color-accent-soft: rgba(22, 102, 196, 0.08);
+/* Dark theme via explicit toggle */
+[data-theme="dark"] {
+  --bg:     #0e0d0a;
+  --ink:    #f4f2ec;
+  --ink-2:  rgba(244, 242, 236, 0.62);
+  --ink-3:  rgba(244, 242, 236, 0.38);
+  --line:   rgba(244, 242, 236, 0.10);
+  --line-2: rgba(244, 242, 236, 0.18);
+  --chip:   rgba(244, 242, 236, 0.06);
+  --accent: #f4f2ec;
+}
+
+/* Auto-detect dark only when no explicit theme set */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:     #0e0d0a;
+    --ink:    #f4f2ec;
+    --ink-2:  rgba(244, 242, 236, 0.62);
+    --ink-3:  rgba(244, 242, 236, 0.38);
+    --line:   rgba(244, 242, 236, 0.10);
+    --line-2: rgba(244, 242, 236, 0.18);
+    --chip:   rgba(244, 242, 236, 0.06);
+    --accent: #f4f2ec;
   }
 }
 
@@ -51,31 +95,49 @@ html {
 
 body {
   margin: 0;
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--bg);
+  color: var(--ink);
   font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.6;
+  transition: background 0.35s, color 0.35s;
 }
 
+::selection { background: var(--ink); color: var(--bg); }
+
 a {
-  color: var(--color-accent);
+  color: var(--ink);
   text-decoration: none;
 }
 
-a:hover {
-  text-decoration: underline;
-}
+a:hover { text-decoration: underline; }
 
 h1, h2, h3, h4 {
-  line-height: 1.2;
+  font-family: var(--font-sans);
   margin: 0 0 var(--space-4);
-  letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
-h1 { font-size: clamp(2rem, 5vw, 3.25rem); }
-h2 { font-size: clamp(1.5rem, 3.5vw, 2.25rem); }
-h3 { font-size: 1.25rem; }
+h1 {
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+
+h2 {
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+h3 {
+  font-weight: 600;
+  font-size: 1.125rem;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
 
 p { margin: 0 0 var(--space-4); }
 
@@ -85,11 +147,20 @@ p { margin: 0 0 var(--space-4); }
   padding-inline: var(--space-6);
 }
 
+/* Reduced motion — both manual toggle + system preference */
+body[data-rm="on"] *,
+body[data-rm="on"] *::before,
+body[data-rm="on"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

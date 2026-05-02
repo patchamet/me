@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import "../styles/animations.css";
 
 interface Props {
   title: string;
@@ -24,8 +25,45 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
+    {/* Set theme attribute before paint to avoid FOUC */}
+    <script is:inline>
+      (() => {
+        let saved = null;
+        try { saved = localStorage.getItem('theme'); } catch (_) {}
+        const t =
+          saved === 'dark' || saved === 'light'
+            ? saved
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
   </head>
   <body>
     <slot />
+
+    {/* Scroll reveal — adds .in to .reveal / .mask-line / .marker on enter */}
+    <script>
+      const reveals = document.querySelectorAll<HTMLElement>(
+        ".reveal, .mask-line, .marker"
+      );
+      if (reveals.length && "IntersectionObserver" in window) {
+        const obs = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add("in");
+                obs.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0.12 }
+        );
+        for (const el of reveals) obs.observe(el);
+      } else {
+        for (const el of reveals) el.classList.add("in");
+      }
+    </script>
   </body>
 </html>

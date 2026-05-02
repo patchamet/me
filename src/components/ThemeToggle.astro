@@ -1,0 +1,85 @@
+---
+// Round Sun/Moon button that toggles `data-theme` on <html> and persists
+// the choice in localStorage. Pure HTML + inline script (no framework).
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  aria-label="Toggle theme"
+  data-theme-toggle
+>
+  <span class="icon icon-sun" aria-hidden="true">☀</span>
+  <span class="icon icon-moon" aria-hidden="true">☾</span>
+</button>
+
+<script>
+  // Reads current theme; falls back to system preference if no override.
+  const root = document.documentElement;
+  const STORAGE_KEY = "theme";
+
+  function currentTheme(): "light" | "dark" {
+    const explicit = root.getAttribute("data-theme");
+    if (explicit === "light" || explicit === "dark") return explicit;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+
+  function applyTheme(t: "light" | "dark") {
+    root.setAttribute("data-theme", t);
+    try { localStorage.setItem(STORAGE_KEY, t); } catch (_) {}
+    // Force a tiny re-mount of the icon so the keyframe replays
+    document.querySelectorAll<HTMLElement>(".theme-toggle .icon").forEach((el) => {
+      el.style.animation = "none";
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      el.offsetHeight; // reflow
+      el.style.animation = "";
+    });
+  }
+
+  for (const btn of document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")) {
+    btn.addEventListener("click", () => {
+      const next = currentTheme() === "dark" ? "light" : "dark";
+      applyTheme(next);
+    });
+  }
+</script>
+
+<style>
+  .theme-toggle {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid var(--line-2);
+    background: var(--bg);
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+    transition:
+      transform 0.25s var(--ease-overshoot),
+      background 0.35s,
+      color 0.35s,
+      border-color 0.35s;
+    position: relative;
+  }
+  .theme-toggle:hover {
+    transform: scale(1.08) rotate(-12deg);
+  }
+
+  .icon {
+    display: inline-block;
+    animation: theme-pop 0.4s var(--ease-pop);
+  }
+
+  /* The init script always sets data-theme on <html>, so we can rely on it. */
+  .icon-sun, .icon-moon { display: none; }
+  :global([data-theme="light"]) .theme-toggle .icon-moon { display: inline-block; }
+  :global([data-theme="dark"]) .theme-toggle .icon-sun { display: inline-block; }
+</style>

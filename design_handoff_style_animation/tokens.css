@@ -1,0 +1,68 @@
+/* tokens.css — color, typography, and easing tokens */
+
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* — Color (light) — */
+  --bg:     #fafaf7;
+  --ink:    #16140f;
+  --ink-2:  rgba(22, 20, 15, .62);
+  --ink-3:  rgba(22, 20, 15, .38);
+  --line:   rgba(22, 20, 15, .10);
+  --line-2: rgba(22, 20, 15, .18);
+  --chip:   rgba(22, 20, 15, .04);
+  --accent: #16140f;
+
+  /* — Typography — */
+  --serif: 'Instrument Serif', 'Times New Roman', serif;
+  --sans:  'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* — Easing — */
+  --ease-overshoot: cubic-bezier(.18, 1.4, .4, 1);  /* reveals, hovers, magnetic */
+  --ease-smooth:    cubic-bezier(.2,  .7,  .2, 1);   /* scroll-driven, line draws */
+  --ease-pop:       cubic-bezier(.2,  1.6, .5, 1);   /* dots, icon pops */
+
+  /* — Speed multiplier (optional global tweak) — */
+  --spd-mult: 1;
+}
+
+[data-theme="dark"] {
+  --bg:     #0e0d0a;
+  --ink:    #f4f2ec;
+  --ink-2:  rgba(244, 242, 236, .62);
+  --ink-3:  rgba(244, 242, 236, .38);
+  --line:   rgba(244, 242, 236, .10);
+  --line-2: rgba(244, 242, 236, .18);
+  --chip:   rgba(244, 242, 236, .06);
+  --accent: #f4f2ec;
+}
+
+/* Smooth theme transition */
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  transition: background .35s, color .35s;
+}
+
+::selection { background: var(--ink); color: var(--bg); }
+
+/* Reduced motion — both manual toggle + system preference */
+body[data-rm="on"] *,
+body[data-rm="on"] *::before,
+body[data-rm="on"] *::after {
+  animation-duration: .01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .01ms !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

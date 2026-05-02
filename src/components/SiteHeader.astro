@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from "./ThemeToggle.astro";
+
 const base = import.meta.env.BASE_URL;
 const links = [
   { href: `${base}#about`, label: "About" },
@@ -9,14 +11,17 @@ const links = [
 
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href={base}><span class="brand-mark">Ω</span> Ohm</a>
-    <nav>
-      <ul>
-        {links.map((l) => (
-          <li><a href={l.href}>{l.label}</a></li>
-        ))}
-      </ul>
-    </nav>
+    <a class="brand" href={base}><span class="brand-mark wobble">Ω</span> Ohm</a>
+    <div class="header-right">
+      <nav>
+        <ul>
+          {links.map((l) => (
+            <li><a class="underline-link" href={l.href}>{l.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <ThemeToggle />
+    </div>
   </div>
 </header>
 
@@ -37,13 +42,18 @@ const links = [
   }
   .brand {
     font-weight: 600;
-    color: var(--color-text);
+    color: var(--ink);
     letter-spacing: 0.01em;
   }
   .brand-mark {
-    color: var(--color-accent);
+    color: var(--ink);
     font-family: var(--font-mono);
     margin-right: 0.15em;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
   }
   nav ul {
     list-style: none;
