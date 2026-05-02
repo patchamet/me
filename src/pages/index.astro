@@ -127,12 +127,12 @@ const jobs: TimelineJob[] = [
       {
         label: "Projects",
         items: [
-          "Virtual Branch Prototype (Kiatnakin Bank)",
-          "API Core Bank Adapter for Virtual Branch (Kiatnakin Bank)",
-          "Accounting & Auditing System (Dharmniti)",
+          "Virtual Branch Prototype",
+          "API Core Bank Adapter for Virtual Branch",
+          "Accounting & Auditing System",
         ],
       },
-      { label: "Maintained", items: ["mPAY"] },
+      { label: "Maintained", items: ["Mobile payment app"] },
       { label: "Responsible for", items: ["API", "Hardware connectors"] },
       {
         label: "Hardware",
@@ -292,7 +292,10 @@ const currentStack = currentJob?.stack ?? [];
                     {e.sections && e.sections.length > 0 && (
                       <dl class="tl-sections">
                         {e.sections.map((s) => {
-                          const variant = s.variant ?? (s.items.length > 1 ? "list" : "inline");
+                          // Default rule: short, tag-like items render inline; longer
+                          // descriptive items render as a bulleted list.
+                          const allShort = s.items.every((i) => i.length < 25);
+                          const variant = s.variant ?? (allShort ? "inline" : "list");
                           return (
                             <>
                               <dt>{s.label}</dt>
@@ -616,7 +619,7 @@ const currentStack = currentJob?.stack ?? [];
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-text) 5%, transparent);
     padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
   }

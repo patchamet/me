@@ -55,9 +55,17 @@ const links = [
   nav a {
     color: var(--color-text-muted);
     font-size: 0.95rem;
+    display: inline-block;
+    padding-block: var(--space-2);
   }
   nav a:hover {
     color: var(--color-text);
     text-decoration: none;
+  }
+
+  /* Wider tap targets on touch screens */
+  @media (max-width: 38rem) {
+    nav ul { gap: var(--space-4); }
+    nav a { padding: var(--space-2) var(--space-2); }
   }
 </style>
