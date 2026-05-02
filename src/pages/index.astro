@@ -230,10 +230,6 @@ const timeline: TimelineEntry[] = [...jobs, ...projectEntries, ...education].sor
 );
 
 const yearLabel = (y: number) => (y >= 9999 ? "Now" : String(y));
-
-// "Currently using" derived from the most recent (ongoing) job
-const currentJob = jobs.find((j) => j.endYear >= 9999);
-const currentStack = currentJob?.stack ?? [];
 ---
 
 <Layout title={`${me.fullName} (${me.nickname}) — ${me.title}`} description={me.blurb}>
@@ -275,24 +271,10 @@ const currentStack = currentJob?.stack ?? [];
         data-on-view
         data-speed="8"
       ></p>
-      <p
-        class="about-prose"
-        data-typewrite="This site is a slow project to keep my own work in one place."
-        data-after="about-p1"
-        data-speed="8"
-      ></p>
     </section>
 
     <section class="section container" id="timeline">
       <h2><span class="marker"></span>Timeline</h2>
-      {currentStack.length > 0 && (
-        <div class="now reveal">
-          <span class="now-label">Currently using</span>
-          <ul class="now-stack">
-            {currentStack.map((t) => <li>{t}</li>)}
-          </ul>
-        </div>
-      )}
       <ol class="tl">
         {timeline.map((e) => {
           const anchor = e.kind === "project" ? `project-${e.id}` : undefined;
@@ -430,6 +412,16 @@ const currentStack = currentJob?.stack ?? [];
     display: inline-block;
     margin-right: 0.3em;
     vertical-align: baseline;
+  }
+  /* On narrow viewports the name wraps below Ω. Force the wordmark
+     onto its own line and add a small margin so it doesn't sit on
+     top of the name. */
+  @media (max-width: 32rem) {
+    h1 .zap-host {
+      display: block;
+      margin-bottom: 0.15em;
+      margin-right: 0;
+    }
   }
   .omega-display {
     font-family: var(--font-mono);
@@ -594,43 +586,6 @@ const currentStack = currentJob?.stack ?? [];
   .btn.ghost:hover { background: var(--color-accent-soft); }
 
   .section { padding-block: var(--space-12); border-top: 1px solid var(--color-border); }
-
-  /* Timeline — "Currently using" callout */
-  .now {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-8);
-    padding: var(--space-4) var(--space-6);
-    background: var(--color-accent-soft);
-    border: 1px dashed color-mix(in srgb, var(--color-accent) 35%, transparent);
-    border-radius: 0;
-  }
-  .now-label {
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    color: var(--color-accent);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  .now-stack {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-  .now-stack li {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--color-accent);
-    background: var(--color-bg);
-    border: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
-    padding: 2px var(--space-2);
-    border-radius: var(--radius-sm);
-  }
 
   .tl {
     list-style: none;

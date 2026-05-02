@@ -13,7 +13,7 @@ const links = [
   <div class="container header-inner">
     <a class="brand" href={base}>WHOAMI</a>
     <div class="header-right">
-      <nav>
+      <nav id="primary-nav" class="nav-menu">
         <ul>
           {links.map((l) => (
             <li><a class="underline-link" href={l.href}>{l.label}</a></li>
@@ -21,9 +21,56 @@ const links = [
         </ul>
       </nav>
       <ThemeToggle />
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+      >
+        <span class="hamburger" aria-hidden="true"></span>
+      </button>
     </div>
   </div>
 </header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>(".nav-toggle");
+  const menu = document.getElementById("primary-nav");
+
+  if (toggle && menu) {
+    const closeMenu = () => {
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.setAttribute("aria-label", "Open menu");
+      menu.classList.remove("open");
+    };
+
+    toggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = toggle.getAttribute("aria-expanded") === "true";
+      const next = !isOpen;
+      toggle.setAttribute("aria-expanded", String(next));
+      toggle.setAttribute("aria-label", next ? "Close menu" : "Open menu");
+      menu.classList.toggle("open", next);
+    });
+
+    // Close when a nav link is clicked
+    menu.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", closeMenu);
+    });
+
+    // Close when clicking outside
+    document.addEventListener("click", (e) => {
+      const target = e.target as Node;
+      if (!toggle.contains(target) && !menu.contains(target)) closeMenu();
+    });
+
+    // Close on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeMenu();
+    });
+  }
+</script>
 
 <style>
   .site-header {
@@ -70,9 +117,87 @@ const links = [
     text-decoration: none;
   }
 
-  /* Wider tap targets on touch screens — meets 44×44 WCAG 2.5.5 */
+  /* Hamburger toggle — visible only on mobile */
+  .nav-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--ink-2);
+    background: var(--bg);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 0;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition:
+      transform 0.25s var(--ease-overshoot),
+      background 0.35s,
+      color 0.35s,
+      border-color 0.35s;
+  }
+  .hamburger {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 1.5px;
+    background: currentColor;
+    transition: background 0.2s;
+  }
+  .hamburger::before,
+  .hamburger::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 18px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 0.25s var(--ease-overshoot);
+  }
+  .hamburger::before { top: -5px; }
+  .hamburger::after  { top: 5px; }
+  .nav-toggle[aria-expanded="true"] .hamburger { background: transparent; }
+  .nav-toggle[aria-expanded="true"] .hamburger::before {
+    transform: translateY(5px) rotate(45deg);
+  }
+  .nav-toggle[aria-expanded="true"] .hamburger::after {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
+  /* Mobile breakpoint — collapse nav into a dropdown */
   @media (max-width: 38rem) {
-    nav ul { gap: var(--space-3); }
-    nav a { padding: var(--space-3) var(--space-3); }
+    .nav-toggle { display: inline-flex; }
+
+    .nav-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line-2);
+      padding: var(--space-3) var(--space-6);
+      transform: translateY(-6px);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        transform 0.25s var(--ease-overshoot),
+        opacity 0.2s;
+    }
+    .nav-menu.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .nav-menu ul {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+    .nav-menu li { width: 100%; }
+    .nav-menu a {
+      display: block;
+      padding: var(--space-3) 0;
+      font-size: 1rem;
+    }
   }
 </style>
