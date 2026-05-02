@@ -138,6 +138,69 @@
   50%      { transform: rotate(5deg); }
 }
 
+/* Pulse — gentle breathing scale */
+.pulse {
+  display: inline-block;
+  animation: pulse 3s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.08); }
+}
+
+/* Walk-in from right — one-shot entrance */
+.walk-in-right {
+  display: inline-block;
+  animation: walk-in-right 0.8s var(--ease-overshoot) both;
+}
+@keyframes walk-in-right {
+  0%   { transform: translateX(150px); opacity: 0; }
+  100% { transform: translateX(0);     opacity: 1; }
+}
+
+/* Flicker-on — fluorescent tube starting (3 flickers then steady) */
+.flicker-on {
+  display: inline-block;
+  animation: flicker-on 0.9s linear both;
+}
+@keyframes flicker-on {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  12%  { opacity: 0; }
+  22%  { opacity: 1; }
+  24%  { opacity: 0.2; }
+  38%  { opacity: 1; }
+  44%  { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* LED glow — pulse scale + breathing text-shadow halo */
+.led-glow {
+  display: inline-block;
+  animation: led-glow 3s ease-in-out infinite;
+}
+@keyframes led-glow {
+  0%, 100% {
+    transform: scale(1);
+    text-shadow: 0 0 0 transparent;
+  }
+  50% {
+    transform: scale(1.06);
+    text-shadow: 0 0 14px currentColor, 0 0 28px currentColor;
+  }
+}
+
+/* Zap flash — for lightning bolt elements that briefly spark.
+   Plain opacity flicker; no text-shadow / box-shadow since those read
+   as a dark blur on light themes. */
+@keyframes zap-flash {
+  0%, 90% { opacity: 0; }
+  92%     { opacity: 1; }
+  94%     { opacity: 0.3; }
+  96%     { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
 /* ─── J. Marker (horizontal line wipe-in) ────────────────────────────── */
 .marker {
   display: inline-block;
