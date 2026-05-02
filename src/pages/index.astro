@@ -241,30 +241,38 @@ const currentStack = currentJob?.stack ?? [];
 
   <main>
     <section class="hero container" id="top">
-      <p class="eyebrow">Hi, I'm</p>
-      <h1>{me.fullName} <span class="alt-name">({me.nickname} <span class="wordmark wobble">Ω</span>)</span></h1>
-      <p class="title">{me.title}</p>
-      <p class="blurb">{me.blurb}</p>
-      <div class="cta">
-        <a class="btn primary" href="#timeline">See my timeline</a>
+      <p class="eyebrow">whoami</p>
+      <h1>
+        <span class="line-1" data-typewrite={me.fullName} data-delay="120"></span>
+        <span class="line-2" data-typewrite={`(${me.nickname} `} data-delay="820" data-tail={`<span class="wordmark wobble">Ω</span>)`}></span>
+      </h1>
+      <p class="title" data-typewrite={`// ${me.title}`} data-delay="1520"></p>
+      <p class="blurb" data-typewrite={me.blurb} data-delay="2220" data-speed="12"></p>
+      <div class="cta reveal-sm" data-show-delay="2820">
+        <a class="btn primary" href="#timeline" data-magnet>See my timeline</a>
         <a class="btn ghost" href={`mailto:${me.email}`}>Get in touch</a>
       </div>
     </section>
 
     <section class="section container reveal" id="about">
-      <h2>About</h2>
-      <p>
-        I've been writing software since 2010, with a BBA in accounting before that.
-        Spent the .NET years on banking and hardware integration, then Node.js on
-        real-time and matching systems, now mostly TypeScript on AWS serverless and
-        AI plumbing. I gravitate to systems where the data model has to be careful
-        and the boundaries are unfamiliar.
-      </p>
-      <p>This site is a slow project to keep my own work in one place.</p>
+      <h2><span class="marker"></span>About</h2>
+      <p
+        id="about-p1"
+        class="about-prose"
+        data-typewrite="I've been writing software since 2010, with a BBA in accounting before that. Spent the .NET years on banking and hardware integration, then Node.js on real-time and matching systems, now mostly TypeScript on AWS serverless and AI plumbing. I gravitate to systems where the data model has to be careful and the boundaries are unfamiliar."
+        data-on-view
+        data-speed="8"
+      ></p>
+      <p
+        class="about-prose"
+        data-typewrite="This site is a slow project to keep my own work in one place."
+        data-after="about-p1"
+        data-speed="8"
+      ></p>
     </section>
 
     <section class="section container" id="timeline">
-      <h2>Timeline</h2>
+      <h2><span class="marker"></span>Timeline</h2>
       {currentStack.length > 0 && (
         <div class="now reveal">
           <span class="now-label">Currently using</span>
@@ -369,7 +377,7 @@ const currentStack = currentJob?.stack ?? [];
     </section>
 
     <section class="section container reveal" id="contact">
-      <h2>Contact</h2>
+      <h2><span class="marker"></span>Contact</h2>
       <p>
         Best reached by email at <a class="underline-link" href={`mailto:${me.email}`}>{me.email}</a>.
         Also on <a class="underline-link" href={me.social.github}>GitHub</a>.
@@ -387,35 +395,79 @@ const currentStack = currentJob?.stack ?? [];
   :global(html) { scroll-behavior: smooth; scroll-padding-top: 4rem; }
 
   .hero { padding-block: var(--space-16) var(--space-12); }
-  .eyebrow {
-    color: var(--color-text-muted);
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    margin-bottom: var(--space-2);
-  }
-  .title { color: var(--color-text-muted); margin-bottom: var(--space-6); }
-  .blurb { max-width: 38rem; font-size: 1.125rem; }
 
-  .alt-name {
-    font-weight: 400;
-    color: var(--color-text-muted);
-    margin-left: 0.25em;
-    white-space: nowrap;
+  /* Eyebrow — terminal-style prompt */
+  .eyebrow {
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem; /* 11px */
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
   }
+
+  /* h1 lines: reserve height so typewriter doesn't shift layout */
+  h1 .line-1, h1 .line-2 {
+    display: block;
+    min-height: 1em;
+  }
+  h1 .line-2 {
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    font-size: 0.78em;
+    letter-spacing: -0.04em;
+    margin-top: 0.1em;
+  }
+
+  .title {
+    font-family: var(--font-mono);
+    color: var(--ink-3);
+    margin-bottom: var(--space-6);
+    min-height: 1em;
+    font-size: 0.875rem;
+    letter-spacing: 0.02em;
+  }
+  .blurb {
+    max-width: 38rem;
+    font-size: 1.125rem;
+    min-height: 5em; /* reserve room while typewriter fills in */
+  }
+
   .wordmark {
-    color: var(--color-accent);
+    color: var(--ink);
     font-family: var(--font-mono);
     margin-left: 0.1em;
   }
+
+  /* About prose — pre-reserve height to soften the layout shift when typing */
+  .about-prose {
+    min-height: 1em;
+  }
+
+  /* Typewriter caret + text wrapper inside [data-typewrite] */
+  :global(.tw-text) { display: inline; }
+  :global(.tw-caret) {
+    display: inline-block;
+    width: 1ch;
+    margin-left: 0.05em;
+    animation: blink 1s step-end infinite;
+    color: currentColor;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
 
   .cta { display: flex; gap: var(--space-4); margin-top: var(--space-6); }
   .btn {
     display: inline-block;
     padding: var(--space-3) var(--space-6);
-    border-radius: var(--radius-md);
+    border-radius: 999px;
     border: 1px solid var(--color-border);
     font-weight: 500;
-    transition: transform 120ms ease, background 120ms ease;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    letter-spacing: 0.04em;
+    transition: transform 0.25s var(--ease-overshoot), background 0.3s, color 0.3s;
   }
   .btn:hover { text-decoration: none; transform: translateY(-1px); }
   .btn.primary { background: var(--color-accent); color: var(--color-bg); border-color: var(--color-accent); }
@@ -434,7 +486,7 @@ const currentStack = currentJob?.stack ?? [];
     padding: var(--space-4) var(--space-6);
     background: var(--color-accent-soft);
     border: 1px dashed color-mix(in srgb, var(--color-accent) 35%, transparent);
-    border-radius: var(--radius-md);
+    border-radius: 0;
   }
   .now-label {
     font-family: var(--font-mono);
@@ -518,7 +570,7 @@ const currentStack = currentJob?.stack ?? [];
   .tl-card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    border-radius: 0;
     padding: var(--space-6);
     transition:
       transform 0.35s var(--ease-overshoot),
@@ -624,9 +676,19 @@ const currentStack = currentJob?.stack ?? [];
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--color-text-muted);
-    background: color-mix(in srgb, var(--color-text) 5%, transparent);
+    background: var(--bg);
+    border: 1px solid var(--line-2);
     padding: 2px var(--space-2);
-    border-radius: var(--radius-sm);
+    border-radius: 999px;
+    transition:
+      transform 0.25s var(--ease-overshoot),
+      background 0.25s,
+      color 0.25s;
+  }
+  .stack li:hover {
+    transform: translateY(-2px) rotate(-2deg);
+    background: var(--ink);
+    color: var(--bg);
   }
   .stack-accent li {
     color: var(--color-accent);
