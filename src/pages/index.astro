@@ -241,32 +241,25 @@ const currentStack = currentJob?.stack ?? [];
 
   <main>
     <section class="hero container" id="top">
-      <p class="eyebrow">whoami</p>
       <h1>
         <span class="zap-host">
           <svg class="zap zap-1" viewBox="0 0 10 30" aria-hidden="true">
-            <polyline points="5,0 1,5 7,7 2,12 8,14 3,20 7,22 4,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
+            <g>
+              <polyline points="5,0 1,6 7,8 3,16 8,19 4,30" />
+              <polyline points="3,16 1,19" />
+            </g>
           </svg>
-          <svg class="zap zap-2" viewBox="0 0 10 30" aria-hidden="true">
-            <polyline points="5,0 8,5 3,7 7,12 2,14 6,20 3,22 5,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
-          </svg>
-          <svg class="zap zap-3" viewBox="0 0 10 30" aria-hidden="true">
-            <polyline points="5,0 2,7 7,9 3,15 8,17 4,24 6,26 2,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
-          </svg>
-          <svg class="zap zap-4" viewBox="0 0 10 30" aria-hidden="true">
-            <polyline points="4,0 7,8 3,11 6,18 2,21 5,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
-          </svg>
-          <svg class="zap zap-5" viewBox="0 0 10 30" aria-hidden="true">
-            <polyline points="6,0 3,8 8,11 4,18 9,21 5,30" fill="none" stroke="var(--zap-color, #fbbf24)" stroke-width="1.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>
-          </svg>
-          <span class="omega-display flicker-on">
-            <span class="pulse">Ω</span>
+          <span class="strike-wrap">
+            <span class="omega-display flicker-on">
+              <span class="pulse">Ω</span>
+            </span>
           </span>
         </span>
         <span class="name-line" data-typewrite={me.fullName} data-delay="900"></span>
+        <span class="callme" id="hero-callme" data-typewrite=" — Just Ohm is fine." data-after="hero-blurb" data-speed="60"></span>
       </h1>
       <p class="title" data-typewrite={`// ${me.title}`} data-delay="1520"></p>
-      <p class="blurb" data-typewrite={me.blurb} data-delay="2220" data-speed="12"></p>
+      <p class="blurb" id="hero-blurb" data-typewrite={me.blurb} data-delay="2220" data-speed="12"></p>
       <div class="cta reveal-sm" data-show-delay="2820">
         <a class="btn primary" href="#timeline" data-magnet>See my timeline</a>
         <a class="btn ghost" href={`mailto:${me.email}`}>Get in touch</a>
@@ -446,54 +439,107 @@ const currentStack = currentJob?.stack ?? [];
     display: inline-block;
   }
   /* Zigzag SVG lightning bolts — positioned on LEFT / TOP / BOTTOM of Ω
-     so they never reach into the name's reading area to the right. */
+     so they never reach into the name's reading area to the right.
+     Plasma palette: white core + cyan inner glow + electric-blue halo. */
   .zap-host {
-    --zap-color: #fbbf24;
+    --zap-core: #ffffff;
+    --zap-glow-1: #00d4ff;
+    --zap-glow-2: #0051ff;
+  }
+  :global([data-theme="light"]) .zap-host {
+    /* Soft sky palette so the bolt reads as electric without the
+       deep-saturation blue dominating the light bg. */
+    --zap-core: #7dd3fc;
+    --zap-glow-1: #93c5fd;
+    --zap-glow-2: #93c5fd;
+  }
+  .zap polyline {
+    stroke: var(--zap-core);
+    stroke-width: 0.6;
+    fill: none;
+    stroke-linejoin: miter;
+    stroke-linecap: round;
   }
   .zap {
     position: absolute;
-    width: 0.5em;
-    height: 1.4em;
+    width: 0.55em;
+    height: 1.6em;
     pointer-events: none;
     opacity: 0;
     overflow: visible;
   }
-  /* Top, slight right tilt */
+  /* Single bolt striking from top-left. JS adds `.striking` to fire
+     the one-shot animation at random intervals (0.5-3.5s gaps). */
   .zap-1 {
-    top: -1.2em;
-    left: 30%;
-    transform: rotate(-8deg);
-    animation: zap-flash 4s ease-out infinite 0.5s;
+    top: -1.3em;
+    left: -0.6em;
+    transform: rotate(-28deg);
   }
-  /* Top-left, sharper tilt */
-  .zap-2 {
-    top: -0.9em;
-    left: -0.4em;
-    transform: rotate(-35deg);
-    animation: zap-flash 4s ease-out infinite 1.6s;
+  .zap-1.striking {
+    animation: zap-flash-once 350ms ease-out forwards;
   }
-  /* Mid-left, near-horizontal */
-  .zap-3 {
-    top: 0.1em;
-    left: -0.9em;
-    transform: rotate(80deg);
-    animation: zap-flash 4s ease-out infinite 2.7s;
-  }
-  /* Bottom-left */
-  .zap-4 {
-    bottom: -0.8em;
-    left: -0.2em;
-    transform: rotate(-150deg);
-    animation: zap-flash 4s ease-out infinite 1s;
-  }
-  /* Bottom, slight left tilt */
-  .zap-5 {
-    bottom: -1em;
-    left: 35%;
-    transform: rotate(170deg);
-    animation: zap-flash 4s ease-out infinite 3.2s;
+  @keyframes zap-flash-once {
+    0%   { opacity: 0; filter: none; }
+    20%  {
+      opacity: 1;
+      filter:
+        drop-shadow(0 0 2px var(--zap-glow-1))
+        drop-shadow(0 0 6px var(--zap-glow-2));
+    }
+    40%  {
+      opacity: 0.4;
+      filter: drop-shadow(0 0 1px var(--zap-glow-1));
+    }
+    60%  {
+      opacity: 1;
+      filter:
+        drop-shadow(0 0 3px var(--zap-glow-1))
+        drop-shadow(0 0 8px var(--zap-glow-2));
+    }
+    100% { opacity: 0; filter: none; }
   }
 
+  /* Strike effect on Ω — fired alongside the bolt via JS. */
+  .strike-wrap {
+    display: inline-block;
+  }
+  .strike-wrap.striking {
+    animation: strike-once 350ms ease-out forwards;
+  }
+  @keyframes strike-once {
+    0%   { filter: none; }
+    20%  {
+      filter:
+        brightness(1.4)
+        drop-shadow(0 0 4px var(--zap-glow-1))
+        drop-shadow(0 0 12px var(--zap-glow-2));
+    }
+    40%  {
+      filter:
+        brightness(1.1)
+        drop-shadow(0 0 2px var(--zap-glow-1));
+    }
+    60%  {
+      filter:
+        brightness(1.4)
+        drop-shadow(0 0 6px var(--zap-glow-1))
+        drop-shadow(0 0 18px var(--zap-glow-2));
+    }
+    100% { filter: none; }
+  }
+
+  /* Inline aside next to the name in h1 — small mono, muted */
+  h1 .callme {
+    font-family: var(--font-mono);
+    font-size: 0.4em;
+    font-weight: 400;
+    color: var(--ink-2);
+    letter-spacing: 0;
+    margin-left: 0.3em;
+    display: inline-block;
+    min-height: 1em;
+    vertical-align: middle;
+  }
   .title {
     font-family: var(--font-mono);
     color: var(--ink-2);
@@ -650,7 +696,7 @@ const currentStack = currentJob?.stack ?? [];
       border-color 0.35s;
   }
   .tl-card:hover {
-    transform: translateY(-2px) rotate(-0.4deg);
+    transform: translateY(-2px);
     border-color: var(--ink);
   }
   .tl-project .tl-card {

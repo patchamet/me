@@ -190,15 +190,34 @@
   }
 }
 
-/* Zap flash — lightning bolt sparks with a yellow drop-shadow glow
-   during the visible portion. Drop-shadow uses the lightning color
-   (not currentColor), so it doesn't read as a dark blur on light. */
+/* Zap flash — plasma-like lightning: bright core + cyan inner glow +
+   blue outer halo. Layered drop-shadows so the bolt looks like real
+   electrical discharge against either theme. */
 @keyframes zap-flash {
-  0%, 90% { opacity: 0; filter: none; }
-  92%     { opacity: 1; filter: drop-shadow(0 0 5px var(--zap-color, #fbbf24)); }
-  94%     { opacity: 0.4; filter: drop-shadow(0 0 2px var(--zap-color, #fbbf24)); }
-  96%     { opacity: 1; filter: drop-shadow(0 0 6px var(--zap-color, #fbbf24)); }
-  100%    { opacity: 0; filter: none; }
+  0%, 90% {
+    opacity: 0;
+    filter: none;
+  }
+  92% {
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 2px var(--zap-glow-1, #00d4ff))
+      drop-shadow(0 0 6px var(--zap-glow-2, #0051ff));
+  }
+  94% {
+    opacity: 0.4;
+    filter: drop-shadow(0 0 1px var(--zap-glow-1, #00d4ff));
+  }
+  96% {
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 3px var(--zap-glow-1, #00d4ff))
+      drop-shadow(0 0 8px var(--zap-glow-2, #0051ff));
+  }
+  100% {
+    opacity: 0;
+    filter: none;
+  }
 }
 
 /* ─── J. Marker (horizontal line wipe-in) ────────────────────────────── */

@@ -66,6 +66,79 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       }
     </script>
 
+    {/* Lightning bolts — each strike is a NEW random bolt shape, fired
+        at a random interval (0.5-3.5s between strikes). The Ω strike
+        glow is fired in lockstep. Skipped under prefers-reduced-motion. */}
+    <script>
+      const reducedMotionZap = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!reducedMotionZap) {
+        const randMain = () => {
+          const segments = 6 + Math.floor(Math.random() * 3); // 6-8 zigs
+          const pts: string[] = [];
+          const jitter = 3 + Math.random() * 1.5;
+          for (let i = 0; i <= segments; i++) {
+            const y = (i / segments) * 30;
+            const x = 5 + (Math.random() - 0.5) * jitter * 2;
+            pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+          }
+          return pts.join(" ");
+        };
+        const randBranch = () => {
+          const x1 = 3 + Math.random() * 4;
+          const y1 = 6 + Math.random() * 18;
+          const x2 = x1 + (Math.random() - 0.5) * 5;
+          const y2 = y1 + 2 + Math.random() * 4;
+          return `${x1.toFixed(1)},${y1.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`;
+        };
+        const randomize = (zap: Element) => {
+          const polys = zap.querySelectorAll("polyline");
+          polys.forEach((p, idx) => {
+            p.setAttribute("points", idx === 0 ? randMain() : randBranch());
+          });
+        };
+
+        const zap = document.querySelector<SVGElement>(".zap");
+        const strikeWrap = document.querySelector<HTMLElement>(".strike-wrap");
+
+        if (zap && strikeWrap) {
+          const strike = () => {
+            // Re-randomize the bolt shape for this strike
+            randomize(zap);
+
+            // Restart the one-shot CSS animations by toggling the class.
+            // Force reflow between remove and add so the keyframe replays.
+            zap.classList.remove("striking");
+            strikeWrap.classList.remove("striking");
+            void zap.getBoundingClientRect();
+            void strikeWrap.getBoundingClientRect();
+            zap.classList.add("striking");
+            strikeWrap.classList.add("striking");
+
+            // Schedule the next strike at a random interval 0.3-4s
+            const nextDelay = 300 + Math.random() * 3700;
+            window.setTimeout(strike, nextDelay);
+          };
+
+          // First strike fires once the entire hero entrance is done —
+          // wait for the callme line to finish typing, then a brief
+          // breath, then start the lightning loop. Falls back to a
+          // fixed delay if callme is missing for any reason.
+          const callme = document.getElementById("hero-callme");
+          if (callme) {
+            callme.addEventListener(
+              "typewrite-done",
+              () => window.setTimeout(strike, 500),
+              { once: true },
+            );
+          } else {
+            window.setTimeout(strike, 3200);
+          }
+        }
+      }
+    </script>
+
     {/* Time-delayed entrance — adds .in to elements after data-show-delay ms */}
     <script>
       for (const el of document.querySelectorAll<HTMLElement>("[data-show-delay]")) {
