@@ -158,20 +158,38 @@
   100% { transform: translateX(0);     opacity: 1; }
 }
 
-/* Flicker-on — fluorescent tube starting (3 flickers then steady) */
+/* Flicker-on — fluorescent tube starting + plasma glow burst on each
+   "on" peak so the entrance reads like the element is being struck
+   into existence. Glow uses --zap-glow-* vars so it stays in sync
+   with the lightning palette per theme. */
 .flicker-on {
   display: inline-block;
   animation: flicker-on 0.9s linear both;
 }
 @keyframes flicker-on {
-  0%   { opacity: 0; }
-  10%  { opacity: 1; }
-  12%  { opacity: 0; }
-  22%  { opacity: 1; }
-  24%  { opacity: 0.2; }
-  38%  { opacity: 1; }
-  44%  { opacity: 0.6; }
-  100% { opacity: 1; }
+  0%   { opacity: 0; filter: none; }
+  10%  {
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 4px var(--zap-glow-1, #00d4ff))
+      drop-shadow(0 0 12px var(--zap-glow-2, #0051ff));
+  }
+  12%  { opacity: 0; filter: none; }
+  22%  {
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 4px var(--zap-glow-1, #00d4ff))
+      drop-shadow(0 0 12px var(--zap-glow-2, #0051ff));
+  }
+  24%  { opacity: 0.2; filter: none; }
+  38%  {
+    opacity: 1;
+    filter:
+      drop-shadow(0 0 6px var(--zap-glow-1, #00d4ff))
+      drop-shadow(0 0 18px var(--zap-glow-2, #0051ff));
+  }
+  44%  { opacity: 0.6; filter: none; }
+  100% { opacity: 1; filter: none; }
 }
 
 /* LED glow — pulse scale + breathing text-shadow halo */
