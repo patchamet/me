@@ -139,6 +139,168 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       }
     </script>
 
+    {/* Cursor lightning — a short, jagged bolt crackles between the last
+        and current pointer position, trailing the mouse. Uses the same
+        plasma palette as the hero bolt, theme-aware. Desktop (fine
+        pointer) only; skipped under prefers-reduced-motion. */}
+    <script>
+      const rmCursor = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      const finePointer = window.matchMedia("(pointer: fine)").matches;
+      if (!rmCursor && finePointer) {
+        const canvas = document.createElement("canvas");
+        canvas.setAttribute("aria-hidden", "true");
+        Object.assign(canvas.style, {
+          position: "fixed",
+          inset: "0",
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+          zIndex: "9", // below the sticky header (z-index 10), above content
+        });
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext("2d")!;
+
+        let dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const resize = () => {
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          canvas.width = Math.floor(window.innerWidth * dpr);
+          canvas.height = Math.floor(window.innerHeight * dpr);
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+        resize();
+        window.addEventListener("resize", resize);
+
+        // Palette mirrors the hero bolt's .zap-host vars, per theme.
+        const palette = () =>
+          document.documentElement.getAttribute("data-theme") === "light"
+            ? { core: "#0284c7", glow: "#7dd3fc", glow2: "#38bdf8" }
+            : { core: "#ffffff", glow: "#00d4ff", glow2: "#0051ff" };
+
+        // Recursive midpoint displacement → a jagged bolt between 2 points.
+        // Low threshold + slow decay = many fine zigzags (a thin, crackly line).
+        const makeBolt = (
+          x1: number,
+          y1: number,
+          x2: number,
+          y2: number,
+          displace: number,
+        ): number[][] => {
+          if (displace < 2) return [[x1, y1], [x2, y2]];
+          const mx = (x1 + x2) / 2 + (Math.random() - 0.5) * displace;
+          const my = (y1 + y2) / 2 + (Math.random() - 0.5) * displace;
+          return makeBolt(x1, y1, mx, my, displace * 0.55)
+            .slice(0, -1)
+            .concat(makeBolt(mx, my, x2, y2, displace * 0.55));
+        };
+
+        // A few short forks off interior vertices → the "cracked" branch look.
+        const makeBranches = (pts: number[][]): number[][][] => {
+          const out: number[][][] = [];
+          const n = 1 + Math.floor(Math.random() * 2); // 1-2 forks
+          for (let k = 0; k < n; k++) {
+            const idx = 1 + Math.floor(Math.random() * (pts.length - 2));
+            const [bx, by] = pts[idx];
+            const len = 7 + Math.random() * 15;
+            const ang = Math.random() * Math.PI * 2;
+            const ex = bx + Math.cos(ang) * len;
+            const ey = by + Math.sin(ang) * len;
+            out.push(makeBolt(bx, by, ex, ey, Math.min(len * 0.5, 9)));
+          }
+          return out;
+        };
+
+        type Bolt = { main: number[][]; branches: number[][][]; life: number };
+        const bolts: Bolt[] = [];
+        let prevX = 0,
+          prevY = 0,
+          hasPrev = false,
+          lastSpawn = 0,
+          raf = 0;
+
+        type Palette = { core: string; glow: string; glow2: string };
+        const strokePath = (
+          pts: number[][],
+          wGlow: number,
+          wCore: number,
+          alpha: number,
+          c: Palette,
+        ) => {
+          ctx.beginPath();
+          ctx.moveTo(pts[0][0], pts[0][1]);
+          for (let j = 1; j < pts.length; j++) ctx.lineTo(pts[j][0], pts[j][1]);
+          // soft glow pass
+          ctx.globalAlpha = alpha * 0.5;
+          ctx.lineWidth = wGlow;
+          ctx.strokeStyle = c.glow2;
+          ctx.shadowBlur = 9;
+          ctx.shadowColor = c.glow;
+          ctx.stroke();
+          // thin crisp core pass
+          ctx.globalAlpha = alpha;
+          ctx.lineWidth = wCore;
+          ctx.strokeStyle = c.core;
+          ctx.shadowBlur = 4;
+          ctx.shadowColor = c.glow;
+          ctx.stroke();
+        };
+
+        const draw = () => {
+          ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+          const c = palette();
+          ctx.lineJoin = "round";
+          ctx.lineCap = "round";
+          for (let i = bolts.length - 1; i >= 0; i--) {
+            const b = bolts[i];
+            b.life -= 0.07;
+            if (b.life <= 0) {
+              bolts.splice(i, 1);
+              continue;
+            }
+            strokePath(b.main, 2.2, 0.7, b.life, c);
+            for (const br of b.branches) strokePath(br, 1.3, 0.45, b.life * 0.8, c);
+          }
+          ctx.globalAlpha = 1;
+          ctx.shadowBlur = 0;
+          raf = bolts.length ? requestAnimationFrame(draw) : 0;
+        };
+
+        window.addEventListener(
+          "pointermove",
+          (e) => {
+            const x = e.clientX,
+              y = e.clientY;
+            if (!hasPrev) {
+              prevX = x;
+              prevY = y;
+              hasPrev = true;
+              return;
+            }
+            const dist = Math.hypot(x - prevX, y - prevY);
+            // Treat a big jump (re-entry / teleport) as a fresh start, no bolt.
+            if (dist > 300) {
+              prevX = x;
+              prevY = y;
+              lastSpawn = e.timeStamp;
+              return;
+            }
+            if (e.timeStamp - lastSpawn > 45 && dist > 8) {
+              const displace = Math.min(dist * 0.45, 30);
+              const main = makeBolt(prevX, prevY, x, y, displace);
+              bolts.push({ main, branches: makeBranches(main), life: 1 });
+              if (bolts.length > 12) bolts.shift();
+              lastSpawn = e.timeStamp;
+              prevX = x;
+              prevY = y;
+              if (!raf) raf = requestAnimationFrame(draw);
+            }
+          },
+          { passive: true },
+        );
+      }
+    </script>
+
     {/* Time-delayed entrance — adds .in to elements after data-show-delay ms */}
     <script>
       for (const el of document.querySelectorAll<HTMLElement>("[data-show-delay]")) {
