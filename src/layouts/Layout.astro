@@ -66,9 +66,45 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
         <circle class="pcb-node" cx="200" cy="160" r="4" />
         <circle class="pcb-node" cx="980" cy="160" r="4" />
         <circle class="pcb-node" cx="600" cy="540" r="4" />
-        <polyline class="pcb-pulse pcb-p1" points="0,120 240,120 280,160 520,160 560,120 900,120 940,160 1200,160" />
-        <polyline class="pcb-pulse pcb-p2" points="0,500 300,500 340,540 620,540 660,500 1000,500 1040,540 1200,540" />
-        <polyline class="pcb-pulse pcb-p3" points="600,0 600,160 560,200 560,500 600,540 600,800" />
+        {/* Current pulses — each is a comet: a bright head + three fainter,
+            thinner trailing copies that lag a few px behind (animation-delay)
+            so the tail fades out instead of reading as a solid bar. Paths are
+            declared once in <defs> and reused. */}
+        <defs>
+          <polyline id="pcb-path-1" points="0,120 240,120 280,160 520,160 560,120 900,120 940,160 1200,160" />
+          <polyline id="pcb-path-2" points="0,500 300,500 340,540 620,540 660,500 1000,500 1040,540 1200,540" />
+          <polyline id="pcb-path-3" points="600,0 600,160 560,200 560,500 600,540 600,800" />
+        </defs>
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-head" />
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t1" />
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t2" />
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t3" />
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t4" />
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t5" />
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t6" />
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t7" />
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t8" />
+        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t9" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-head" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t1" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t2" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t3" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t4" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t5" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t6" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t7" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t8" />
+        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t9" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-head" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t1" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t2" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t3" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t4" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t5" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t6" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t7" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t8" />
+        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t9" />
       </svg>
     </div>
 
@@ -115,7 +151,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           disp: number,
           out: number[][],
         ) => {
-          if (disp < 0.6) {
+          if (disp < 0.4) {
             out.push([x2, y2]);
             return;
           }
@@ -152,22 +188,32 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           );
         };
         const randomize = (zap: Element) => {
-          const g = zap.querySelector("g")!;
+          // Generate one shape (main bolt + forks) and apply the identical
+          // points to BOTH the blue body group and the white core group, so
+          // they stay perfectly in register — the same dual-pass look as the
+          // cursor trail.
           const main = boltPts(5, 0, 4, 30, 5.5);
-          const first = zap.querySelector("polyline")!;
-          first.setAttribute("points", ptsToStr(main));
-          // drop the previous forks, keep the main (first) polyline
-          const polys = zap.querySelectorAll("polyline");
-          for (let i = 1; i < polys.length; i++) polys[i].remove();
-          // 1-3 fresh forks off the main bolt. Clone the main polyline rather
-          // than createElementNS: a hand-built element misses Astro's scoped
-          // style hash, so it would fall back to SVG defaults (fill: black)
-          // and render as a solid black blob. Cloning carries the hash over.
+          const mainStr = ptsToStr(main);
           const n = 1 + Math.floor(Math.random() * 3);
-          for (let k = 0; k < n; k++) {
-            const pl = first.cloneNode(false) as Element;
-            pl.setAttribute("points", ptsToStr(forkPts(main)));
-            g.appendChild(pl);
+          const forkStrs: string[] = [];
+          for (let k = 0; k < n; k++) forkStrs.push(ptsToStr(forkPts(main)));
+
+          for (const sel of [".zap-body", ".zap-core"]) {
+            const g = zap.querySelector(sel)!;
+            const first = g.querySelector("polyline")!;
+            first.setAttribute("points", mainStr);
+            // drop the previous forks, keep the main (first) polyline
+            const polys = g.querySelectorAll("polyline");
+            for (let i = 1; i < polys.length; i++) polys[i].remove();
+            // Fresh forks by cloning the main polyline rather than
+            // createElementNS: a hand-built element misses Astro's scoped
+            // style hash, so it would fall back to SVG defaults (fill: black)
+            // and render as a solid black blob. Cloning carries the hash over.
+            for (const f of forkStrs) {
+              const pl = first.cloneNode(false) as Element;
+              pl.setAttribute("points", f);
+              g.appendChild(pl);
+            }
           }
         };
 
@@ -373,10 +419,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       }
     </script>
 
-    {/* Custom cursor — a small plasma dot replaces the native arrow, with a
-        soft spark glow that ignites over interactive elements. The lightning
-        trail still streams behind it. Desktop (fine pointer) only; under
-        prefers-reduced-motion the native cursor is kept. */}
+    {/* Custom cursor — a small plasma dot replaces the native arrow, wrapped
+        in a soft spark glow. The glow is bright at rest and dims over
+        interactive elements so it never obscures a button's label. The
+        lightning trail still streams behind it. Desktop (fine pointer) only;
+        under prefers-reduced-motion the native cursor is kept. */}
     <script>
       const rmDot = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
@@ -408,8 +455,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           position: "fixed",
           left: "0",
           top: "0",
-          width: "40px",
-          height: "40px",
+          width: "32px",
+          height: "32px",
           borderRadius: "50%",
           pointerEvents: "none",
           zIndex: "58",
@@ -434,33 +481,43 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
         const interactiveSel =
           "a, button, [role=button], summary, label, [data-magnet]";
         let dotShown = false;
+        let overInteractive = false;
+
+        // At rest the spark glow is bright; over a button only the glow dims
+        // out — the dot keeps its full plasma colour (fading it just made it
+        // look grey) and at 6px it never blocks the label.
+        const applyState = () => {
+          if (!dotShown) return;
+          dot.style.opacity = "1";
+          glow.style.opacity = overInteractive ? "0" : "1";
+        };
+
         window.addEventListener(
           "pointermove",
           (e) => {
             dot.style.transform = `translate(${e.clientX - 3}px, ${e.clientY - 3}px)`;
-            glow.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
+            glow.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
             if (!dotShown) {
               // reveal + hide the native cursor only once JS is confirmed live
               dotShown = true;
-              dot.style.opacity = "1";
               document.documentElement.classList.add("cursor-ready");
+              applyState();
             }
           },
           { passive: true },
         );
-        // spark glow only over interactive elements
+        // dim the glow over interactive elements, restore it elsewhere
         document.addEventListener("pointerover", (e) => {
           const t = e.target as Element;
-          glow.style.opacity = t.closest?.(interactiveSel) ? "1" : "0";
+          overInteractive = !!t.closest?.(interactiveSel);
+          applyState();
         });
         // hide when the pointer leaves the window, restore on return
         document.addEventListener("mouseleave", () => {
           dot.style.opacity = "0";
           glow.style.opacity = "0";
         });
-        document.addEventListener("mouseenter", () => {
-          dot.style.opacity = "1";
-        });
+        document.addEventListener("mouseenter", applyState);
       }
     </script>
 
