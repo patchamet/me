@@ -158,6 +158,54 @@ p { margin: 0 0 var(--space-4); }
   }
 }
 
+/* Ambient PCB background — faint circuit traces with a slow current pulse,
+   behind all content (z-index -1). Colours track the theme; the current is
+   kept fainter in light mode. Frozen automatically by the reduced-motion
+   rules below (no JS guard needed). */
+:root {
+  --pcb-trace: rgba(22, 20, 15, 0.06);
+  --pcb-node:  rgba(22, 20, 15, 0.10);
+  --pcb-pulse: #0284c7;
+  --pcb-pulse-op: 0.5;
+}
+[data-theme="dark"] {
+  --pcb-trace: rgba(244, 242, 236, 0.05);
+  --pcb-node:  rgba(244, 242, 236, 0.10);
+  --pcb-pulse: #00d4ff;
+  --pcb-pulse-op: 0.7;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pcb-trace: rgba(244, 242, 236, 0.05);
+    --pcb-node:  rgba(244, 242, 236, 0.10);
+    --pcb-pulse: #00d4ff;
+    --pcb-pulse-op: 0.7;
+  }
+}
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.site-bg .pcb { width: 100%; height: 100%; }
+.site-bg .pcb-trace { fill: none; stroke: var(--pcb-trace); stroke-width: 1; }
+.site-bg .pcb-node { fill: var(--pcb-node); }
+.site-bg .pcb-pulse {
+  fill: none;
+  stroke: var(--pcb-pulse);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 16 380;
+  opacity: var(--pcb-pulse-op);
+  filter: drop-shadow(0 0 3px var(--pcb-pulse));
+}
+.site-bg .pcb-p1 { animation: pcb-flow 7s linear infinite; }
+.site-bg .pcb-p2 { animation: pcb-flow 9s linear infinite; }
+.site-bg .pcb-p3 { animation: pcb-flow 11s linear infinite; }
+@keyframes pcb-flow { to { stroke-dashoffset: -396; } }
+
 /* Reduced motion — both manual toggle + system preference */
 body[data-rm="on"] *,
 body[data-rm="on"] *::before,
