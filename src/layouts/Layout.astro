@@ -120,7 +120,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
             Math.min(len * 0.6, 2.2),
           );
         };
-        const SVGNS = "http://www.w3.org/2000/svg";
         const randomize = (zap: Element) => {
           const g = zap.querySelector("g")!;
           const main = boltPts(5, 0, 4, 30, 5.5);
@@ -129,10 +128,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           // drop the previous forks, keep the main (first) polyline
           const polys = zap.querySelectorAll("polyline");
           for (let i = 1; i < polys.length; i++) polys[i].remove();
-          // 1-3 fresh forks off the main bolt
+          // 1-3 fresh forks off the main bolt. Clone the main polyline rather
+          // than createElementNS: a hand-built element misses Astro's scoped
+          // style hash, so it would fall back to SVG defaults (fill: black)
+          // and render as a solid black blob. Cloning carries the hash over.
           const n = 1 + Math.floor(Math.random() * 3);
           for (let k = 0; k < n; k++) {
-            const pl = document.createElementNS(SVGNS, "polyline");
+            const pl = first.cloneNode(false) as Element;
             pl.setAttribute("points", ptsToStr(forkPts(main)));
             g.appendChild(pl);
           }
