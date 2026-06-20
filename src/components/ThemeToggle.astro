@@ -1,9 +1,9 @@
 ---
-// Illuminated tactile push-button that toggles `data-theme` on <html> and
-// persists the choice in localStorage. Front-on view of a switch: a neutral
-// bezel + a flat, sharp, clear-acrylic cap. DARK = released, unlit, dark
-// clear panel (☾). LIGHT = pressed straight in + lit from within in a soft
-// grey glow (☀). Pure HTML + inline script, no framework.
+// Theme toggle styled as a flat, sharp, frameless panel (no bezel). It toggles
+// `data-theme` on <html> and persists the choice in localStorage.
+//   DARK  = a dark clear-acrylic panel, lit moon (☾).
+//   LIGHT = a solid white panel, pressed slightly in, grey sun (☀).
+// Pure HTML + inline script, no framework.
 ---
 
 <button
@@ -13,16 +13,9 @@
   aria-pressed="false"
   data-theme-toggle
 >
-  <span class="t-body" aria-hidden="true"></span>
-  <span class="t-post tl" aria-hidden="true"></span>
-  <span class="t-post tr" aria-hidden="true"></span>
-  <span class="t-post bl" aria-hidden="true"></span>
-  <span class="t-post br" aria-hidden="true"></span>
-  <span class="t-cap" aria-hidden="true">
-    <span class="t-glow"></span>
-    <span class="t-ic t-sun">☀</span>
-    <span class="t-ic t-moon">☾</span>
-  </span>
+  <span class="t-glow" aria-hidden="true"></span>
+  <span class="t-ic t-sun" aria-hidden="true">☀</span>
+  <span class="t-ic t-moon" aria-hidden="true">☾</span>
 </button>
 
 <script>
@@ -41,11 +34,10 @@
     root.setAttribute("data-theme", t);
     try { localStorage.setItem(STORAGE_KEY, t); } catch (_) {}
     for (const btn of document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")) {
-      btn.setAttribute("aria-pressed", String(t === "light")); // light = lit/pressed
+      btn.setAttribute("aria-pressed", String(t === "light")); // light = pressed/lit
     }
   }
 
-  // reflect the initial state on load
   for (const btn of document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]")) {
     btn.setAttribute("aria-pressed", String(currentTheme() === "light"));
     btn.addEventListener("click", () => {
@@ -55,89 +47,38 @@
 </script>
 
 <style>
-  /* ===== the illuminated tactile button (≈45x29) ===== */
+  /* flat, sharp, frameless panel (≈45x29) */
   .theme-toggle {
     position: relative;
     width: 45px;
     height: 29px;
     border: 0;
-    background: none;
+    border-radius: 0;
     padding: 0;
     cursor: pointer;
-    flex: 0 0 auto;
-    /* bezel tone — neutral black in dark, light grey in light */
-    --bezel-a: #222222;
-    --bezel-b: #0a0a0a;
-    --post: #060606;
-  }
-  :global([data-theme="light"]) .theme-toggle {
-    --bezel-a: #e6e6df;
-    --bezel-b: #c3c3bb;
-    --post: #a9a9a1;
-  }
-
-  .t-body {
-    position: absolute;
-    inset: 0;
-    border-radius: 0;
-    background: linear-gradient(145deg, var(--bezel-a), var(--bezel-b));
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 3px 7px rgba(0, 0, 0, 0.4);
-    transition: background 0.4s, box-shadow 0.4s;
-  }
-  :global([data-theme="light"]) .t-body {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6), 0 2px 5px rgba(0, 0, 0, 0.18);
-  }
-
-  .t-post {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    border-radius: 0;
-    background: var(--post);
-    transition: background 0.4s;
-  }
-  .t-post.tl { top: 2px; left: 2px; }
-  .t-post.tr { top: 2px; right: 2px; }
-  .t-post.bl { bottom: 2px; left: 2px; }
-  .t-post.br { bottom: 2px; right: 2px; }
-
-  /* cap fills the bezel (≈3px border shows); flat, sharp, lit from within */
-  .t-cap {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 39px;
-    height: 23px;
-    border-radius: 0;
     overflow: hidden;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     transition: transform 0.18s var(--ease-overshoot), box-shadow 0.32s, background 0.32s;
-    transform: translate(-50%, -50%) scale(1); /* DARK = raised, in place */
-    /* OFF: flat dark clear panel */
+    /* DARK = dark clear-acrylic panel */
+    transform: scale(1);
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
-      linear-gradient(180deg, rgba(20, 20, 21, 0.64), rgba(2, 2, 2, 0.88));
+      linear-gradient(180deg, rgba(20, 20, 21, 0.7), rgba(2, 2, 2, 0.92));
     box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.07),
-      inset 0 0 9px rgba(0, 0, 0, 0.3);
+      inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+      inset 0 0 9px rgba(0, 0, 0, 0.3),
+      0 2px 6px rgba(0, 0, 0, 0.4);
   }
-  .t-cap::before {
+  /* thin flat top-edge catch (glassy read in dark) */
+  .theme-toggle::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 2;
     pointer-events: none;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0, rgba(255, 255, 255, 0) 7%);
-  }
-  .t-cap::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   }
   .t-glow {
     position: absolute;
@@ -147,23 +88,17 @@
     background: radial-gradient(78% 78% at 50% 50%, rgba(110, 110, 112, 0.06), rgba(0, 0, 0, 0) 74%);
   }
 
-  /* ON (light): pressed straight in + grey light from within */
-  :global([data-theme="light"]) .t-cap {
-    transform: translate(-50%, -50%) scale(0.93);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0) 18%),
-      radial-gradient(88% 88% at 50% 50%, rgba(150, 154, 158, 0.42) 0%, rgba(150, 154, 158, 0.16) 68%, transparent 100%);
+  /* LIGHT = solid white panel, pressed slightly in */
+  :global([data-theme="light"]) .theme-toggle {
+    transform: scale(0.94);
+    background: #ffffff;
     box-shadow:
-      inset 0 0 0 1px rgba(120, 124, 128, 0.5),
-      inset 0 0 16px rgba(130, 134, 138, 0.3),
-      0 0 12px rgba(140, 144, 148, 0.45),
-      0 0 26px rgba(140, 144, 148, 0.26);
+      inset 0 0 0 1px rgba(0, 0, 0, 0.14),
+      0 1px 3px rgba(0, 0, 0, 0.14);
   }
-  :global([data-theme="light"]) .t-glow {
-    background: radial-gradient(72% 72% at 50% 50%, #d2d5d7 0%, #9da1a5 42%, rgba(157, 161, 165, 0.22) 78%, rgba(255, 255, 255, 0) 92%);
-    box-shadow: inset 0 0 20px rgba(150, 154, 158, 0.5);
-  }
-  .theme-toggle:active .t-cap { transform: translate(-50%, -50%) scale(0.89); }
+  :global([data-theme="light"]) .theme-toggle::before { background: none; }
+  :global([data-theme="light"]) .t-glow { background: none; }
+  .theme-toggle:active { transform: scale(0.9); }
 
   /* icons */
   .t-ic {
@@ -173,7 +108,7 @@
     line-height: 1;
     transition: opacity 0.25s;
   }
-  .t-sun { font-size: 14px; color: #fff; opacity: 0; text-shadow: 0 0 6px rgba(255, 255, 255, 0.85); }
+  .t-sun { font-size: 14px; color: #84888c; opacity: 0; } /* grey sun, visible on white */
   .t-moon { font-size: 12px; color: #d2d5cf; opacity: 0.8; }
   :global([data-theme="light"]) .t-sun { opacity: 1; }
   :global([data-theme="light"]) .t-moon { opacity: 0; }
