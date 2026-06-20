@@ -342,6 +342,97 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       }
     </script>
 
+    {/* Custom cursor — a small plasma dot replaces the native arrow, with a
+        soft spark glow that ignites over interactive elements. The lightning
+        trail still streams behind it. Desktop (fine pointer) only; under
+        prefers-reduced-motion the native cursor is kept. */}
+    <script>
+      const rmDot = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      const fineDot = window.matchMedia("(pointer: fine)").matches;
+      if (!rmDot && fineDot) {
+        const dotPalette = () =>
+          document.documentElement.getAttribute("data-theme") === "light"
+            ? { core: "#0284c7", soft: "#7dd3fc" }
+            : { core: "#ffffff", soft: "#00d4ff" };
+
+        const dot = document.createElement("div");
+        const glow = document.createElement("div");
+        dot.setAttribute("aria-hidden", "true");
+        glow.setAttribute("aria-hidden", "true");
+        Object.assign(dot.style, {
+          position: "fixed",
+          left: "0",
+          top: "0",
+          width: "6px",
+          height: "6px",
+          borderRadius: "50%",
+          pointerEvents: "none",
+          zIndex: "60",
+          opacity: "0",
+          transition: "opacity 0.2s",
+        });
+        Object.assign(glow.style, {
+          position: "fixed",
+          left: "0",
+          top: "0",
+          width: "40px",
+          height: "40px",
+          borderRadius: "50%",
+          pointerEvents: "none",
+          zIndex: "58",
+          opacity: "0",
+          transition: "opacity 0.18s",
+        });
+        document.body.append(glow, dot);
+
+        const paintDot = () => {
+          const p = dotPalette();
+          dot.style.background = p.core;
+          dot.style.boxShadow = `0 0 6px ${p.soft}, 0 0 12px ${p.soft}`;
+          glow.style.background = `radial-gradient(circle, ${p.soft} 0%, transparent 70%)`;
+        };
+        paintDot();
+        // keep the dot/glow colour in sync with the theme toggle
+        new MutationObserver(paintDot).observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ["data-theme"],
+        });
+
+        const interactiveSel =
+          "a, button, [role=button], summary, label, [data-magnet]";
+        let dotShown = false;
+        window.addEventListener(
+          "pointermove",
+          (e) => {
+            dot.style.transform = `translate(${e.clientX - 3}px, ${e.clientY - 3}px)`;
+            glow.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
+            if (!dotShown) {
+              // reveal + hide the native cursor only once JS is confirmed live
+              dotShown = true;
+              dot.style.opacity = "1";
+              document.documentElement.classList.add("cursor-ready");
+            }
+          },
+          { passive: true },
+        );
+        // spark glow only over interactive elements
+        document.addEventListener("pointerover", (e) => {
+          const t = e.target as Element;
+          glow.style.opacity = t.closest?.(interactiveSel) ? "1" : "0";
+        });
+        // hide when the pointer leaves the window, restore on return
+        document.addEventListener("mouseleave", () => {
+          dot.style.opacity = "0";
+          glow.style.opacity = "0";
+        });
+        document.addEventListener("mouseenter", () => {
+          dot.style.opacity = "1";
+        });
+      }
+    </script>
+
     {/* Time-delayed entrance — adds .in to elements after data-show-delay ms */}
     <script>
       for (const el of document.querySelectorAll<HTMLElement>("[data-show-delay]")) {

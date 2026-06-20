@@ -147,6 +147,17 @@ p { margin: 0 0 var(--space-4); }
   padding-inline: var(--space-6);
 }
 
+/* Custom cursor — the native arrow is hidden once the JS dot follower is
+   active (it adds .cursor-ready to <html>). Gated to hover-capable fine
+   pointers; the follower script also bails under prefers-reduced-motion,
+   so touch and reduced-motion users keep the normal cursor. */
+@media (hover: hover) and (pointer: fine) {
+  html.cursor-ready,
+  html.cursor-ready * {
+    cursor: none;
+  }
+}
+
 /* Reduced motion — both manual toggle + system preference */
 body[data-rm="on"] *,
 body[data-rm="on"] *::before,
