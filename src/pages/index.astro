@@ -257,8 +257,14 @@ const yearLabel = (y: number) => (y >= 9999 ? "Now" : String(y));
       <p class="title" data-typewrite={`// ${me.title}`} data-delay="1520"></p>
       <p class="blurb" id="hero-blurb" data-typewrite={me.blurb} data-delay="2220" data-speed="12"></p>
       <div class="cta reveal-sm" data-show-delay="2820">
-        <a class="btn primary" href="#timeline" data-magnet>See my timeline</a>
-        <a class="btn ghost" href={`mailto:${me.email}`}>Get in touch</a>
+        <a class="btn primary" href="#timeline">
+          <span class="btn-scanwrap" aria-hidden="true"><span class="btn-scan"></span></span>
+          See my timeline
+        </a>
+        <a class="btn ghost" href={`mailto:${me.email}`}>
+          <span class="btn-scanwrap" aria-hidden="true"><span class="btn-scan"></span></span>
+          Get in touch
+        </a>
       </div>
     </section>
 
@@ -579,20 +585,80 @@ const yearLabel = (y: number) => (y >= 9999 ? "Now" : String(y));
 
   .cta { display: flex; gap: var(--space-4); margin-top: var(--space-6); }
   .btn {
+    position: relative;
     display: inline-block;
     padding: var(--space-3) var(--space-6);
-    border-radius: 999px;
+    border-radius: 3px; /* angular component look (was a pill) */
     border: 1px solid var(--ink-2);
     font-weight: 500;
     font-family: var(--font-mono);
     font-size: 0.875rem;
     letter-spacing: 0.04em;
-    transition: transform 0.25s var(--ease-overshoot), background 0.3s, color 0.3s;
+    transition: transform 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth), background 0.3s, color 0.3s;
   }
-  .btn:hover { text-decoration: none; transform: translateY(-1px); }
+  /* gentle "pick it up" lift — soft, non-bouncy, same on both buttons */
+  .btn:hover {
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.13);
+  }
   .btn.primary { background: var(--color-accent); color: var(--color-bg); border-color: var(--color-accent); }
   .btn.ghost { background: transparent; color: var(--color-text); }
   .btn.ghost:hover { background: var(--color-accent-soft); }
+
+  /* "Scan energize" — the button stays monochrome; only these overlays use
+     the lightning/circuit colour (--pcb-pulse, theme-aware: sky-600 light /
+     cyan dark). A scan line sweeps across on hover; the four corner solder
+     nodes pulse a slow glow while the button is hovered. */
+  /* clips the sweeping band to the button so it never spills past the edge;
+     the corner nodes live OUTSIDE this wrapper so their glow can still bloom */
+  .btn-scanwrap {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  .btn-scan {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 54px; /* a band: bright leading edge + faint trailing wake */
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      color-mix(in srgb, var(--pcb-pulse) 16%, transparent) 60%,
+      color-mix(in srgb, var(--pcb-pulse) 55%, transparent) 90%,
+      var(--pcb-pulse) 100%
+    );
+    opacity: 0;
+    pointer-events: none;
+  }
+  .btn:hover .btn-scan { animation: btn-scan 1.2s var(--ease-smooth); }
+  @keyframes btn-scan {
+    0%   { left: -54px; opacity: 0; }
+    12%  { opacity: 0.9; }
+    88%  { opacity: 0.9; }
+    100% { left: 100%; opacity: 0; }
+  }
+  /* slow-blinking electric edge while hovered (an overlay border so it can
+     glow without affecting the button's own monochrome border) */
+  .btn::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    border: 1px solid var(--pcb-pulse);
+    box-shadow: 0 0 6px var(--pcb-pulse);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .btn:hover::after { animation: btn-edge-blink 2.4s ease-in-out infinite; }
+  @keyframes btn-edge-blink {
+    0%, 100% { opacity: 0.22; box-shadow: 0 0 3px var(--pcb-pulse); }
+    50%      { opacity: 1;    box-shadow: 0 0 9px var(--pcb-pulse); }
+  }
 
   .section { padding-block: var(--space-12); border-top: 1px solid var(--color-border); }
 
