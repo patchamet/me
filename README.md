@@ -32,7 +32,7 @@ public/                      static assets (favicon, og images)
 ## Adding a project
 
 1. Create `src/content/projects/<slug>.md`.
-2. Fill in frontmatter — see `example-project.md` for the schema.
+2. Fill in frontmatter — see `content.config.ts` for the schema.
 3. Set `draft: false` to publish; `featured: true` to surface on the home page.
 4. Body uses **Problem → Approach → Result → What I'd do differently** as the default rhythm.
 
@@ -46,6 +46,6 @@ One-time setup on GitHub: **Settings → Pages → Source: GitHub Actions**.
 
 - [ ] Replace `Your Name` / contact info in `src/pages/index.astro` and `src/components/`
 - [ ] Fill in real `about`, `skills` content
-- [ ] Replace `example-project.md` with real case studies
+- [ ] Add real case studies under `src/content/projects/`
 - [ ] Add `public/og.png` for social previews
 - [ ] Add favicon variants if desired
