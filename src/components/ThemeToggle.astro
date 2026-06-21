@@ -1,8 +1,11 @@
 ---
-// Theme toggle styled as a flat, sharp, frameless panel (no bezel). It toggles
+// Theme toggle styled as a horizontal PCB "rail" slide switch. It toggles
 // `data-theme` on <html> and persists the choice in localStorage.
-//   DARK  = a dark clear-acrylic panel, lit moon (☾).
-//   LIGHT = a solid white panel, pressed slightly in, grey sun (☀).
+//   DARK  = ON  : nub slid RIGHT, trace energized cyan (var(--pcb-pulse)),
+//                 lit cyan ☾ riding on the nub.
+//   LIGHT = OFF : nub slid LEFT, trace de-energized to neutral grey,
+//                 gold ☀ riding on the nub.
+// The ☀/☾ icon rides the moving nub so it is never occluded.
 // Pure HTML + inline script, no framework.
 ---
 
@@ -13,9 +16,15 @@
   aria-pressed="false"
   data-theme-toggle
 >
-  <span class="t-glow" aria-hidden="true"></span>
-  <span class="t-ic t-sun" aria-hidden="true">☀</span>
-  <span class="t-ic t-moon" aria-hidden="true">☾</span>
+  <span class="tt-rail" aria-hidden="true">
+    <span class="tt-trace"></span>
+    <span class="tt-pad tt-pad-l"></span>
+    <span class="tt-pad tt-pad-r"></span>
+  </span>
+  <span class="tt-nub" aria-hidden="true">
+    <span class="tt-ic tt-sun">☀</span>
+    <span class="tt-ic tt-moon">☾</span>
+  </span>
 </button>
 
 <script>
@@ -47,69 +56,200 @@
 </script>
 
 <style>
-  /* flat, sharp, frameless panel (≈45x29) */
+  /* ===================================================================
+     PCB rail slide switch — flat / sharp (border-radius:0 throughout).
+     BASE (unqualified) selectors = DARK / ON look. Light/OFF is the
+     :global([data-theme="light"]) override (data-theme lives on <html>).
+     Accent = var(--pcb-pulse); intensity capped to var(--pcb-pulse-op),
+     so it never glows louder than the ambient PCB-comet background.
+     =================================================================== */
   .theme-toggle {
+    --w: 52px;
+    --h: 28px;
+    --pad: 3px;
+    --nub: calc(var(--h) - var(--pad) * 2);  /* 22px */
+    --travel: calc(var(--w) - var(--h));     /* 24px */
+    --op: var(--pcb-pulse-op, 0.47);
+
     position: relative;
-    width: 45px;
-    height: 29px;
-    border: 0;
-    border-radius: 0;
+    box-sizing: border-box;
+    width: var(--w);
+    height: var(--h);
     padding: 0;
+    border: 0;
+    border-radius: 0;             /* flat / sharp house aesthetic */
     cursor: pointer;
-    overflow: hidden;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.18s var(--ease-overshoot), box-shadow 0.32s, background 0.32s;
-    /* DARK = dark clear-acrylic panel */
-    transform: scale(1);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 20%),
-      linear-gradient(180deg, rgba(20, 20, 21, 0.7), rgba(2, 2, 2, 0.92));
+    display: inline-block;
+    vertical-align: middle;
+    font-family: var(--font-mono);
+    -webkit-tap-highlight-color: transparent;
+    /* dark recessed board substrate */
+    background: linear-gradient(180deg, rgba(20, 20, 21, 0.7), rgba(2, 2, 2, 0.92));
     box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.14),
-      inset 0 0 9px rgba(0, 0, 0, 0.3),
-      0 2px 6px rgba(0, 0, 0, 0.4);
-  }
-  /* thin flat top-edge catch (glassy read in dark) */
-  .theme-toggle::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0, rgba(255, 255, 255, 0) 7%);
-  }
-  .t-glow {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: radial-gradient(78% 78% at 50% 50%, rgba(110, 110, 112, 0.06), rgba(0, 0, 0, 0) 74%);
+      inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+      inset 0 1px 3px rgba(0, 0, 0, 0.55);
+    transition: background 0.3s, box-shadow 0.3s;
   }
 
-  /* LIGHT = solid white panel, pressed slightly in */
+  /* recessed channel holding the trace + solder pads */
+  .tt-rail {
+    position: absolute;
+    inset: var(--pad);
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  }
+
+  /* PCB trace running pad-to-pad */
+  .tt-trace {
+    position: absolute;
+    top: 50%;
+    left: 7px;
+    right: 7px;
+    height: 2px;
+    transform: translateY(-50%);
+    background: var(--pcb-pulse, #00d4ff);
+    opacity: var(--op);
+    box-shadow: 0 0 5px var(--pcb-pulse, #00d4ff);
+    animation: tt-pulse 2.4s ease-in-out infinite;
+  }
+
+  /* solder pads at each end */
+  .tt-pad {
+    position: absolute;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    background: #3a3d41;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
+  .tt-pad-l { left: 1px; }
+  .tt-pad-r {
+    right: 1px;
+    background: var(--pcb-pulse, #00d4ff);
+    box-shadow: 0 0 5px var(--pcb-pulse, #00d4ff);
+    opacity: var(--op);
+  }
+
+  /* the sliding nub — sharp cap that CARRIES the icon (never occluded) */
+  .tt-nub {
+    position: absolute;
+    top: var(--pad);
+    left: var(--pad);
+    z-index: 3;
+    width: var(--nub);
+    height: var(--nub);
+    border-radius: 0;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(180deg, #4a4d52, #25272b);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 1px 2px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(0, 0, 0, 0.4);
+    transform: translateX(var(--travel));  /* DARK / ON = thrown RIGHT */
+    transition: transform 0.26s var(--ease-overshoot), background 0.3s, box-shadow 0.3s;
+  }
+
+  /* the two icons, stacked in the same grid cell + cross-faded */
+  .tt-ic {
+    grid-area: 1 / 1;
+    line-height: 1;
+    pointer-events: none;
+    transition: opacity 0.22s;
+  }
+  .tt-sun {
+    font-size: 13px;
+    color: #ffb020;                                   /* vivid gold */
+    text-shadow: 0 0 5px rgba(255, 176, 32, 0.75), 0 0 2px rgba(255, 210, 120, 0.9);
+    opacity: 0;
+  }
+  .tt-moon {
+    font-size: 12px;
+    color: #4fe6ff;                                   /* vivid cyan */
+    text-shadow: 0 0 6px var(--pcb-pulse, #00d4ff), 0 0 2px #cdf6ff;
+    opacity: 1;
+  }
+
+  .theme-toggle:active .tt-nub { transform: translateX(var(--travel)) scaleX(0.9); }
+
+  @keyframes tt-pulse {
+    0%, 100% { opacity: calc(var(--op) * 0.6); }
+    50%      { opacity: var(--op); }
+  }
+
+  /* ===================================================================
+     LIGHT / OFF — nub slides LEFT, trace + pads de-energize to neutral
+     cool grey (no copper), gold ☀ on the nub.
+     =================================================================== */
   :global([data-theme="light"]) .theme-toggle {
-    transform: scale(0.94);
     background: #ffffff;
     box-shadow:
-      inset 0 0 0 1px rgba(0, 0, 0, 0.14),
-      0 1px 3px rgba(0, 0, 0, 0.14);
+      inset 0 0 0 1px rgba(0, 0, 0, 0.16),
+      inset 0 1px 2px rgba(0, 0, 0, 0.12);
   }
-  :global([data-theme="light"]) .theme-toggle::before { background: none; }
-  :global([data-theme="light"]) .t-glow { background: none; }
-  .theme-toggle:active { transform: scale(0.9); }
+  :global([data-theme="light"]) .tt-rail {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  }
+  :global([data-theme="light"]) .tt-trace {
+    background: #aeb2b6;
+    opacity: 0.55;
+    box-shadow: none;
+    animation: none;
+  }
+  :global([data-theme="light"]) .tt-pad {
+    background: #c4c7cb;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+    opacity: 1;
+  }
+  :global([data-theme="light"]) .tt-pad-r {
+    background: #c4c7cb;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18);
+  }
+  :global([data-theme="light"]) .tt-nub {
+    transform: translateX(0);     /* thrown LEFT */
+    background: linear-gradient(180deg, #ffffff, #dde0e4);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      0 1px 2px rgba(0, 0, 0, 0.22),
+      0 0 0 1px rgba(0, 0, 0, 0.12);
+  }
+  :global([data-theme="light"]) .tt-sun {
+    opacity: 1;
+    color: #f5a000;                                   /* gold on white cap */
+    text-shadow: 0 0 5px rgba(245, 160, 0, 0.6);
+  }
+  :global([data-theme="light"]) .tt-moon { opacity: 0; }
+  :global([data-theme="light"]) .theme-toggle:active .tt-nub { transform: translateX(0) scaleX(0.9); }
 
-  /* icons */
-  .t-ic {
-    position: absolute;
-    z-index: 5;
-    font-family: var(--font-mono);
-    line-height: 1;
-    transition: opacity 0.25s;
+  /* hover pre-glow on real pointers only */
+  @media (hover: hover) and (pointer: fine) {
+    .theme-toggle:hover .tt-nub {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        0 0 0 2px color-mix(in srgb, var(--pcb-pulse) 24%, transparent),
+        0 1px 2px rgba(0, 0, 0, 0.55);
+    }
+    :global([data-theme="light"]) .theme-toggle:hover .tt-nub {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        0 0 0 2px color-mix(in srgb, var(--pcb-pulse) 22%, transparent),
+        0 1px 2px rgba(0, 0, 0, 0.22);
+    }
   }
-  .t-sun { font-size: 14px; color: #84888c; opacity: 0; } /* grey sun, visible on white */
-  .t-moon { font-size: 12px; color: #d2d5cf; opacity: 0.8; }
-  :global([data-theme="light"]) .t-sun { opacity: 1; }
-  :global([data-theme="light"]) .t-moon { opacity: 0; }
+
+  /* keyboard focus */
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--pcb-pulse, #00d4ff);
+    outline-offset: 2px;
+  }
+
+  /* reduced motion: state still carried by position + icon + brightness */
+  @media (prefers-reduced-motion: reduce) {
+    .tt-nub { transition: none; }
+    .tt-trace { animation: none; }
+    .theme-toggle:active .tt-nub { transform: translateX(var(--travel)); }
+    :global([data-theme="light"]) .theme-toggle:active .tt-nub { transform: translateX(0); }
+  }
 </style>
