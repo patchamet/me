@@ -66,7 +66,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
         <circle class="pcb-node" cx="200" cy="160" r="4" />
         <circle class="pcb-node" cx="980" cy="160" r="4" />
         <circle class="pcb-node" cx="600" cy="540" r="4" />
-        {/* Current pulses — each is a comet: a bright head + three fainter,
+        {/* Current pulses — each is a comet: a bright head + four fainter,
             thinner trailing copies that lag a few px behind (animation-delay)
             so the tail fades out instead of reading as a solid bar. Paths are
             declared once in <defs> and reused. */}
@@ -80,31 +80,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
         <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t2" />
         <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t3" />
         <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t4" />
-        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t5" />
-        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t6" />
-        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t7" />
-        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t8" />
-        <use href="#pcb-path-1" class="pcb-pulse pcb-p1 pcb-t9" />
         <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-head" />
         <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t1" />
         <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t2" />
         <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t3" />
         <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t4" />
-        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t5" />
-        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t6" />
-        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t7" />
-        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t8" />
-        <use href="#pcb-path-2" class="pcb-pulse pcb-p2 pcb-t9" />
         <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-head" />
         <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t1" />
         <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t2" />
         <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t3" />
         <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t4" />
-        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t5" />
-        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t6" />
-        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t7" />
-        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t8" />
-        <use href="#pcb-path-3" class="pcb-pulse pcb-p3 pcb-t9" />
       </svg>
     </div>
 
@@ -293,7 +278,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
         // Palette mirrors the hero bolt's .zap-host vars, per theme.
         const palette = () =>
           document.documentElement.getAttribute("data-theme") === "light"
-            ? { core: "#0284c7", glow: "#7dd3fc", glow2: "#38bdf8" }
+            ? { core: "#1f85bd", glow: "#94cceb", glow2: "#52aee0" }
             : { core: "#ffffff", glow: "#00d4ff", glow2: "#0051ff" };
 
         // Recursive midpoint displacement → a jagged bolt between 2 points.
@@ -434,8 +419,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
       if (!rmDot && fineDot) {
         const dotPalette = () =>
           document.documentElement.getAttribute("data-theme") === "light"
-            ? { core: "#0284c7", soft: "#7dd3fc" }
-            : { core: "#ffffff", soft: "#00d4ff" };
+            ? { core: "#1f85bd", soft: "#94cceb" }
+            : { core: "#ffffff", soft: "#1f9dff" };
 
         const dot = document.createElement("div");
         const glow = document.createElement("div"); // halo wrapper — carries the translate

@@ -165,20 +165,20 @@ p { margin: 0 0 var(--space-4); }
 :root {
   --pcb-trace: rgba(22, 20, 15, 0.06);
   --pcb-node:  rgba(22, 20, 15, 0.10);
-  --pcb-pulse: #0284c7;
+  --pcb-pulse: #1f85bd;
   --pcb-pulse-op: 0.33;
 }
 [data-theme="dark"] {
   --pcb-trace: rgba(244, 242, 236, 0.05);
   --pcb-node:  rgba(244, 242, 236, 0.10);
-  --pcb-pulse: #00d4ff;
+  --pcb-pulse: #1f9dff;
   --pcb-pulse-op: 0.47;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --pcb-trace: rgba(244, 242, 236, 0.05);
     --pcb-node:  rgba(244, 242, 236, 0.10);
-    --pcb-pulse: #00d4ff;
+    --pcb-pulse: #1f9dff;
     --pcb-pulse-op: 0.47;
   }
 }
@@ -197,28 +197,28 @@ p { margin: 0 0 var(--space-4); }
   stroke: var(--pcb-pulse);
   stroke-linecap: round;
   stroke-dasharray: 8 388;
-  filter: drop-shadow(0 0 3px var(--pcb-pulse));
   animation: pcb-flow var(--pcb-dur, 8s) linear infinite;
 }
 /* per-pulse speed */
 .site-bg .pcb-p1 { --pcb-dur: 7s; }
 .site-bg .pcb-p2 { --pcb-dur: 9s; }
 .site-bg .pcb-p3 { --pcb-dur: 11s; }
-/* comet layers — the head is the brightest point (full pulse opacity); ten
-   heavily-overlapping copies (~70% overlap) each lag a tiny step further
-   behind and ease down in opacity and width, so the streak reads as one
-   smooth gradient from a bright nucleus to nothing rather than discrete
-   segments. Overall length is ~2/3 of the previous version. */
-.site-bg .pcb-head { stroke-width: 1.8;  opacity: var(--pcb-pulse-op);              animation-delay: -2.400s; }
-.site-bg .pcb-t1   { stroke-width: 1.7;  opacity: calc(var(--pcb-pulse-op) * 0.82); animation-delay: -2.358s; }
-.site-bg .pcb-t2   { stroke-width: 1.6;  opacity: calc(var(--pcb-pulse-op) * 0.66); animation-delay: -2.316s; }
-.site-bg .pcb-t3   { stroke-width: 1.5;  opacity: calc(var(--pcb-pulse-op) * 0.52); animation-delay: -2.274s; }
-.site-bg .pcb-t4   { stroke-width: 1.35; opacity: calc(var(--pcb-pulse-op) * 0.40); animation-delay: -2.232s; }
-.site-bg .pcb-t5   { stroke-width: 1.2;  opacity: calc(var(--pcb-pulse-op) * 0.30); animation-delay: -2.190s; }
-.site-bg .pcb-t6   { stroke-width: 1.05; opacity: calc(var(--pcb-pulse-op) * 0.21); animation-delay: -2.148s; }
-.site-bg .pcb-t7   { stroke-width: 0.95; opacity: calc(var(--pcb-pulse-op) * 0.14); animation-delay: -2.106s; }
-.site-bg .pcb-t8   { stroke-width: 0.85; opacity: calc(var(--pcb-pulse-op) * 0.08); animation-delay: -2.064s; }
-.site-bg .pcb-t9   { stroke-width: 0.75; opacity: calc(var(--pcb-pulse-op) * 0.035); animation-delay: -2.022s; }
+/* comet layers — the head is the brightest point (full pulse opacity) with
+   four fainter, thinner copies lagging a tiny step behind so the streak fades
+   smoothly to nothing. Only the head carries the drop-shadow bloom: blurring
+   all the layers every frame was the bulk of the background's paint cost, and
+   the faint trail strokes barely glowed anyway. Five layers per comet (was
+   ten) — roughly half the repaint work. */
+.site-bg .pcb-head {
+  stroke-width: 1.8;
+  opacity: var(--pcb-pulse-op);
+  animation-delay: -2.400s;
+  filter: drop-shadow(0 0 3px var(--pcb-pulse));
+}
+.site-bg .pcb-t1 { stroke-width: 1.6;  opacity: calc(var(--pcb-pulse-op) * 0.60); animation-delay: -2.345s; }
+.site-bg .pcb-t2 { stroke-width: 1.45; opacity: calc(var(--pcb-pulse-op) * 0.36); animation-delay: -2.290s; }
+.site-bg .pcb-t3 { stroke-width: 1.3;  opacity: calc(var(--pcb-pulse-op) * 0.20); animation-delay: -2.235s; }
+.site-bg .pcb-t4 { stroke-width: 1.15; opacity: calc(var(--pcb-pulse-op) * 0.09); animation-delay: -2.180s; }
 @keyframes pcb-flow { to { stroke-dashoffset: -396; } }
 
 /* Reduced motion — both manual toggle + system preference */

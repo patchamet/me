@@ -452,16 +452,17 @@ const yearLabel = (y: number) => (y >= 9999 ? "Now" : String(y));
     --zap-glow-2: #0051ff;
   }
   :global([data-theme="light"]) .zap-host {
-    /* Keep the baseline's icy sky-blue character but make it readable on
-       the warm cream bg: the pale #7dd3fc was only ~1.6:1. sky-600
-       #0284c7 is the lightest sky-blue that still clears the ~3:1 graphic
-       threshold (~3.9:1), wrapped in a pale-sky glow so it still reads as
-       the light/electric baseline rather than a deep navy. A dark line on
-       a light bg looks heavier than a bright line on dark (irradiation),
-       so the light-mode stroke is kept thinner than dark's 0.6. */
-    --zap-core: #0284c7;
-    --zap-glow-1: #7dd3fc;
-    --zap-glow-2: #38bdf8;
+    /* Keep an icy sky-blue character but readable on the warm cream bg. The
+       core is a softened sky-blue (#1f85bd, sat ~72%) — toned down from the
+       vivid sky-600 #0284c7 but the same lightness, so it still clears the
+       ~3:1 graphic threshold (~3.9:1) — wrapped in a paler sky glow so it
+       reads as the light/electric baseline rather than a deep navy. A dark
+       line on a light bg looks heavier than a bright line on dark
+       (irradiation), so the light-mode stroke is kept thinner than dark's
+       0.6. */
+    --zap-core: #1f85bd;
+    --zap-glow-1: #94cceb;
+    --zap-glow-2: #52aee0;
     --zap-sw: 0.3;
     --zap-bw: 0.8;
   }
