@@ -420,10 +420,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
     </script>
 
     {/* Custom cursor — a small plasma dot replaces the native arrow, wrapped
-        in a soft spark glow. The glow is bright at rest and dims over
-        interactive elements so it never obscures a button's label. The
-        lightning trail still streams behind it. Desktop (fine pointer) only;
-        under prefers-reduced-motion the native cursor is kept. */}
+        in a soft spark glow. The cursor only "charges" while the pointer is
+        moving: dot + glow light up on motion and fade back to a faint point
+        once it stops, mirroring the lightning trail that streams behind it.
+        The glow stays hidden over interactive elements so it never obscures a
+        button's label. Desktop (fine pointer) only; under
+        prefers-reduced-motion the native cursor is kept. */}
     <script>
       const rmDot = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
@@ -449,7 +451,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           pointerEvents: "none",
           zIndex: "60",
           opacity: "0",
-          transition: "opacity 0.2s",
+          transition: "opacity 0.2s, box-shadow 0.25s",
         });
         Object.assign(glow.style, {
           position: "fixed",
@@ -461,15 +463,38 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           pointerEvents: "none",
           zIndex: "58",
           opacity: "0",
-          transition: "opacity 0.18s",
+          transition: "opacity 0.3s ease-out",
         });
         document.body.append(glow, dot);
+
+        const interactiveSel =
+          "a, button, [role=button], summary, label, [data-magnet]";
+        let dotShown = false;
+        let overInteractive = false;
+        let moving = false;
+        let idleTimer = 0;
+
+        // The cursor only lights up while the pointer is actually moving.
+        //   moving  → bright plasma dot + soft spark glow (glow stays hidden
+        //             over buttons so it never masks a label).
+        //   at rest → glow dims to a faint residual and the dot calms to a
+        //             faint point, so the cursor stays visible but no longer
+        //             "charged". The glow only fully hides over buttons.
+        const applyState = () => {
+          if (!dotShown) return;
+          const p = dotPalette();
+          dot.style.opacity = "1";
+          dot.style.boxShadow = moving
+            ? `0 0 6px ${p.soft}, 0 0 12px ${p.soft}`
+            : `0 0 3px ${p.soft}`;
+          glow.style.opacity = overInteractive ? "0" : moving ? "1" : "0.18";
+        };
 
         const paintDot = () => {
           const p = dotPalette();
           dot.style.background = p.core;
-          dot.style.boxShadow = `0 0 6px ${p.soft}, 0 0 12px ${p.soft}`;
           glow.style.background = `radial-gradient(circle, ${p.soft} 0%, transparent 70%)`;
+          applyState();
         };
         paintDot();
         // keep the dot/glow colour in sync with the theme toggle
@@ -477,20 +502,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           attributes: true,
           attributeFilter: ["data-theme"],
         });
-
-        const interactiveSel =
-          "a, button, [role=button], summary, label, [data-magnet]";
-        let dotShown = false;
-        let overInteractive = false;
-
-        // At rest the spark glow is bright; over a button only the glow dims
-        // out — the dot keeps its full plasma colour (fading it just made it
-        // look grey) and at 6px it never blocks the label.
-        const applyState = () => {
-          if (!dotShown) return;
-          dot.style.opacity = "1";
-          glow.style.opacity = overInteractive ? "0" : "1";
-        };
 
         window.addEventListener(
           "pointermove",
@@ -501,19 +512,28 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
               // reveal + hide the native cursor only once JS is confirmed live
               dotShown = true;
               document.documentElement.classList.add("cursor-ready");
-              applyState();
             }
+            moving = true;
+            applyState();
+            // let the charge fade back out shortly after motion stops
+            clearTimeout(idleTimer);
+            idleTimer = window.setTimeout(() => {
+              moving = false;
+              applyState();
+            }, 240);
           },
           { passive: true },
         );
-        // dim the glow over interactive elements, restore it elsewhere
+        // hide the glow over interactive elements, restore it elsewhere
         document.addEventListener("pointerover", (e) => {
           const t = e.target as Element;
           overInteractive = !!t.closest?.(interactiveSel);
           applyState();
         });
-        // hide when the pointer leaves the window, restore on return
+        // hide when the pointer leaves the window, calm on return
         document.addEventListener("mouseleave", () => {
+          clearTimeout(idleTimer);
+          moving = false;
           dot.style.opacity = "0";
           glow.style.opacity = "0";
         });
