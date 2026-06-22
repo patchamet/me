@@ -423,8 +423,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
         in a soft spark glow. The cursor only "charges" while the pointer is
         moving: dot + glow light up on motion and fade back to a faint point
         once it stops, mirroring the lightning trail that streams behind it.
-        The glow stays hidden over interactive elements so it never obscures a
-        button's label. Desktop (fine pointer) only; under
+        Over an interactive element the halo sends out a crisp ping ring as a
+        "clickable" cue. Desktop (fine pointer) only; under
         prefers-reduced-motion the native cursor is kept. */}
     <script>
       const rmDot = window.matchMedia(
@@ -438,7 +438,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
             : { core: "#ffffff", soft: "#00d4ff" };
 
         const dot = document.createElement("div");
-        const glow = document.createElement("div");
+        const glow = document.createElement("div"); // halo wrapper — carries the translate
+        const glowCore = document.createElement("div"); // soft filled glow (steady)
+        const glowRing = document.createElement("div"); // crisp ring that pings on hover
         dot.setAttribute("aria-hidden", "true");
         glow.setAttribute("aria-hidden", "true");
         Object.assign(dot.style, {
@@ -459,27 +461,63 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           top: "0",
           width: "32px",
           height: "32px",
-          borderRadius: "50%",
           pointerEvents: "none",
           zIndex: "58",
           opacity: "0",
+        });
+        Object.assign(glowCore.style, {
+          position: "absolute",
+          inset: "0",
+          borderRadius: "50%",
+          opacity: "0",
           transition: "opacity 0.3s ease-out",
         });
+        Object.assign(glowRing.style, {
+          position: "absolute",
+          inset: "0",
+          borderRadius: "50%",
+          boxSizing: "border-box",
+          border: "2px solid transparent",
+          opacity: "0",
+          pointerEvents: "none",
+        });
+        glow.append(glowCore, glowRing);
         document.body.append(glow, dot);
+
+        // crisp expanding "ping" ring radiating while hovering something clickable
+        const pulseStyle = document.createElement("style");
+        pulseStyle.textContent =
+          "@keyframes cursor-ping{0%{transform:scale(0.4);opacity:0}15%{opacity:0.9}100%{transform:scale(1.85);opacity:0}}";
+        document.head.appendChild(pulseStyle);
 
         const interactiveSel =
           "a, button, [role=button], summary, label, [data-magnet]";
         let dotShown = false;
         let overInteractive = false;
         let moving = false;
+        let pulsing = false;
         let idleTimer = 0;
 
-        // The cursor only lights up while the pointer is actually moving.
-        //   moving  → bright plasma dot + soft spark glow (glow stays hidden
-        //             over buttons so it never masks a label).
-        //   at rest → glow dims to a faint residual and the dot calms to a
-        //             faint point, so the cursor stays visible but no longer
-        //             "charged". The glow only fully hides over buttons.
+        // toggle the expanding ping ring (guarded so a stream of pointermoves
+        // doesn't restart the animation every frame)
+        const setPulse = (on: boolean) => {
+          if (on === pulsing) return;
+          pulsing = on;
+          if (on) {
+            glowRing.style.animation = "cursor-ping 1.5s ease-out infinite";
+          } else {
+            glowRing.style.animation = "none";
+            glowRing.style.opacity = "0";
+            glowRing.style.transform = "none";
+          }
+        };
+
+        // The cursor lights up while the pointer is actually moving:
+        //   moving  → bright plasma dot + soft spark halo.
+        //   at rest → halo dims to a faint residual, dot calms to a point.
+        //   over a button/link → a crisp ring pings outward as a "clickable"
+        //             cue while the filled glow softens so the label stays
+        //             readable; the dot keeps its precise position.
         const applyState = () => {
           if (!dotShown) return;
           const p = dotPalette();
@@ -487,13 +525,22 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           dot.style.boxShadow = moving
             ? `0 0 6px ${p.soft}, 0 0 12px ${p.soft}`
             : `0 0 3px ${p.soft}`;
-          glow.style.opacity = overInteractive ? "0" : moving ? "1" : "0.18";
+          glow.style.opacity = "1";
+          if (overInteractive) {
+            setPulse(true);
+            glowCore.style.opacity = "0.28"; // soft center so the ring reads crisp
+          } else {
+            setPulse(false);
+            glowCore.style.opacity = moving ? "1" : "0.18";
+          }
         };
 
         const paintDot = () => {
           const p = dotPalette();
           dot.style.background = p.core;
-          glow.style.background = `radial-gradient(circle, ${p.soft} 0%, transparent 70%)`;
+          glowCore.style.background = `radial-gradient(circle, ${p.soft} 0%, transparent 70%)`;
+          glowRing.style.borderColor = p.soft;
+          glowRing.style.boxShadow = `0 0 6px ${p.soft}`;
           applyState();
         };
         paintDot();
@@ -524,7 +571,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).toString();
           },
           { passive: true },
         );
-        // hide the glow over interactive elements, restore it elsewhere
+        // pulse the halo over interactive elements, restore plain glow elsewhere
         document.addEventListener("pointerover", (e) => {
           const t = e.target as Element;
           overInteractive = !!t.closest?.(interactiveSel);
